@@ -1,1 +1,1 @@
-# part 2 - Game Theory
+# Project for part 2 - Game Theory

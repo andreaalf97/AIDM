@@ -1,1 +1,1 @@
-# part 3 - Reinforcement learning
+# Project for part 3 - Reinforcement learning
