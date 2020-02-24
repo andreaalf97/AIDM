@@ -59,7 +59,7 @@ constraint forall (i in 1..numVehicles) ((vehicles[i,Date]=0 /\ schedule[i] != i
 
 int : numPreviousDayVehicles = count(vehicles[..,Date],0);
 
-%constraint all_different(schedule);
+constraint all_different(schedule);
 
 %For each contraint
 constraint forall (c in Constraints)
@@ -83,8 +83,12 @@ constraint forall (i in numPreviousDayVehicles+1..numVehicles-paintBatchLimit)
   (nvalue(schedule[i..i+paintBatchLimit]) > 1);
  
  
-var int : paintChanges = 
-count(i in numPreviousDayVehicles+1..numVehicles-1)(vehicles[schedule[i], PaintColour] != vehicles[schedule[i+1], PaintColour]);
+var int : paintChanges;
+
+constraint paintChanges = count([  vehicles[schedule[i], PaintColour] != vehicles[schedule[i+1],PaintColour]  | 
+i in numPreviousDayVehicles+1..numVehicles-1], true);
+
+
 
 
 % The multipliers of each available objective, which are described in "Objectives."
