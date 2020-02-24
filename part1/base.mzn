@@ -50,7 +50,7 @@ var int : highViolations = sum(c in Constraints where ratios[c,Priority] = 1)(vi
 
 var int : lowViolations = sum(c in Constraints where ratios[c,Priority] = 0)(violations[c]);
 
-var int : paintViolations;
+
 
 %%%% The following are our custom constraints
 
@@ -59,7 +59,7 @@ constraint forall (i in 1..numVehicles) ((vehicles[i,Date]=0 /\ schedule[i] != i
 
 int : numPreviousDayVehicles = count(vehicles[..,Date],0);
 
-constraint all_different(schedule);
+%constraint all_different(schedule);
 
 %For each contraint
 constraint forall (c in Constraints)
@@ -77,7 +77,15 @@ constraint forall (c in Constraints)
            )
       ) 
   );
-  
+
+
+constraint forall (i in numPreviousDayVehicles+1..numVehicles-paintBatchLimit)
+  (nvalue(schedule[i..i+paintBatchLimit]) > 1);
+ 
+ 
+var int : paintChanges = 
+count(i in numPreviousDayVehicles+1..numVehicles-1)(vehicles[schedule[i], PaintColour] != vehicles[schedule[i+1], PaintColour]);
+
 
 % The multipliers of each available objective, which are described in "Objectives."
 % In the original datafile, the first-ranked objective receives a multiplier of 10000,
@@ -85,8 +93,8 @@ constraint forall (c in Constraints)
 % not included in the optimization objectives, its multiplier is 0.
 array[Objectives] of int: objectiveMultipliers;
 
-solve minimize (highViolations * objectiveMultipliers[HPRatioConstraints]) + (lowViolations * objectiveMultipliers[LPRatioConstraints]);
+solve minimize (highViolations * objectiveMultipliers[HPRatioConstraints]) + (lowViolations * objectiveMultipliers[LPRatioConstraints]) + (paintChanges * objectiveMultipliers[PaintColourBatches]);
 
 output[show(schedule), "\n violations: ", show(violations), "\n highViolations:", show(highViolations), "\n lowViolations:", show(lowViolations), 
-"\n totalViolations:", show(sum(violations)), 
+"\n totalViolations:", show(sum(violations)), "\n paintChanges:", show(paintChanges), 
 "\n minimizedGoal:", show((highViolations * objectiveMultipliers[HPRatioConstraints]) + (lowViolations * objectiveMultipliers[LPRatioConstraints]))];
