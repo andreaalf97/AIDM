@@ -41,10 +41,18 @@ array[1..numVehicles, Constraints] of 0..1: associatedConstraints;
 % from the ordering within this matrix.
 array[1..numVehicles, VehicleProperties] of int: vehicles;
 
+%%%% The following are our custom variables to be "solved"
 array[1..numVehicles] of var int: schedule;
 
 array[Constraints] of var int: violations;
 
+var int : highViolations = sum(c in Constraints where ratios[c,Priority] = 1)(violations[c]);
+
+var int : lowViolations = sum(c in Constraints where ratios[c,Priority] = 0)(violations[c]);
+
+var int : paintViolations;
+
+%%%% The following are our custom constraints
 
 %If a vehicle belongs to date D-1, then its place in the schedule is the same as its place in the "vehicles" array.
 constraint forall (i in 1..numVehicles) ((vehicles[i,Date]=0 /\ schedule[i] != i) = false);
@@ -53,10 +61,20 @@ int : numPreviousDayVehicles = count(vehicles[..,Date],0);
 
 constraint all_different(schedule);
 
+%For each contraint
 constraint forall (c in Constraints)
+  % Count the violations of the current constraint in the whole schedule. Start by setting the starting points
+  % of the windows you are about to examine, from the first to the last one. For example, if the current constraint ratio
+  % is N/P, the starting point of the first window is #previousDayVehicles - P + 2, and the starting point of the last window is
+  % #totalVehicles - N, as indicated in the problem definition.
   (violations[c] = sum(i in (numPreviousDayVehicles - ratios[c,Denominator] + 2)..(numVehicles-ratios[c,Numerator]))
-      (max(0,(sum (j in i..min(i+ratios[c,Denominator]-1,numVehicles))
-        (associatedConstraints[schedule[j],c]))-ratios[c,Numerator])
+      % For each window (positions i to i+P, unless we reach the end of the schedule), count the number of violations
+      % of the current constraint, which is defined as "vehiclesWithConstraint - N". If the number of violations is negative,
+      % then it is actually zero (0), so that is the usage of "max".
+      (max(0,(
+        sum (j in i..min(i+ratios[c,Denominator]-1,numVehicles)) (associatedConstraints[schedule[j],c])
+             )-ratios[c,Numerator]
+           )
       ) 
   );
   
@@ -67,6 +85,8 @@ constraint forall (c in Constraints)
 % not included in the optimization objectives, its multiplier is 0.
 array[Objectives] of int: objectiveMultipliers;
 
-solve minimize sum(violations);
+solve minimize (highViolations * objectiveMultipliers[HPRatioConstraints]) + (lowViolations * objectiveMultipliers[LPRatioConstraints]);
 
-output[show(schedule), "\n ", show(sum(violations))];
+output[show(schedule), "\n violations: ", show(violations), "\n highViolations:", show(highViolations), "\n lowViolations:", show(lowViolations), 
+"\n totalViolations:", show(sum(violations)), 
+"\n minimizedGoal:", show((highViolations * objectiveMultipliers[HPRatioConstraints]) + (lowViolations * objectiveMultipliers[LPRatioConstraints]))];
