@@ -42,53 +42,58 @@ array[1..numVehicles, Constraints] of 0..1: associatedConstraints;
 array[1..numVehicles, VehicleProperties] of int: vehicles;
 
 %%%% The following are our custom variables to be "solved"
-array[1..numVehicles] of var int: schedule;
+array[1..numVehicles] of var 1..numVehicles: schedule;
 
 array[Constraints] of var int: violations;
 
+%number of violations of high priority constraint
 var int : highViolations = sum(c in Constraints where ratios[c,Priority] = 1)(violations[c]);
 
+%number of violations of low priority constraint
 var int : lowViolations = sum(c in Constraints where ratios[c,Priority] = 0)(violations[c]);
 
+%Support variables
+
+int : numPreviousDayVehicles = count(vehicles[..,Date],0); %Number of vehicles from the previous day
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%% The following are our custom constraints
 
-%If a vehicle belongs to date D-1, then its place in the schedule is the same as its place in the "vehicles" array.
-constraint forall (i in 1..numVehicles) ((vehicles[i,Date]=0 /\ schedule[i] != i) = false);
-
-int : numPreviousDayVehicles = count(vehicles[..,Date],0);
-
 constraint all_different(schedule);
 
-%For each contraint
-constraint forall (c in Constraints)
-  % Count the violations of the current constraint in the whole schedule. Start by setting the starting points
-  % of the windows you are about to examine, from the first to the last one. For example, if the current constraint ratio
-  % is N/P, the starting point of the first window is #previousDayVehicles - P + 2, and the starting point of the last window is
-  % #totalVehicles - N, as indicated in the problem definition.
-  (violations[c] = sum(i in (numPreviousDayVehicles - ratios[c,Denominator] + 2)..(numVehicles-ratios[c,Numerator]))
-      % For each window (positions i to i+P, unless we reach the end of the schedule), count the number of violations
-      % of the current constraint, which is defined as "vehiclesWithConstraint - N". If the number of violations is negative,
-      % then it is actually zero (0), so that is the usage of "max".
-      (max(0,(
-        sum (j in i..min(i+ratios[c,Denominator]-1,numVehicles)) (associatedConstraints[schedule[j],c])
-             )-ratios[c,Numerator]
-           )
-      ) 
-  );
 
+%If a vehicle belongs to date D-1, then its place in the schedule is the same as its place in the "vehicles" array.
+%Both versions are kept to test which one is faster
+%constraint forall (i in 1..numVehicles) ((vehicles[i,Date]=0 /\ schedule[i] != i) = false);
+constraint forall (i in 1..numVehicles) (vehicles[i, Date] = 0 -> schedule[i] = i);
 
+%nvalue = returns the number of distinct values in the array
+% This makes sure there are no long sequences of the same paint color
 constraint forall (i in numPreviousDayVehicles+1..numVehicles-paintBatchLimit)
-  (nvalue(schedule[i..i+paintBatchLimit]) > 1);
+  (
+     nvalue([vehicles[schedule[j] , PaintColour] | j in i..i+paintBatchLimit]) > 1
+  );
  
- 
+
+ % Counts how many times the paint has been changed 
 var int : paintChanges;
+constraint paintChanges = count(
+  [ vehicles[schedule[i], PaintColour] != vehicles[schedule[i+1],PaintColour]  | i in numPreviousDayVehicles+1..numVehicles-1], 
+    true
+);
 
-constraint paintChanges = count([  vehicles[schedule[i], PaintColour] != vehicles[schedule[i+1],PaintColour]  | 
-i in numPreviousDayVehicles+1..numVehicles-1], true);
-
-
+%violations[c] is defined as the sum of 0 or 1, where it is 1 if the constraint is not respected for a certain window
+constraint forall (c in Constraints)( %For every constraint
+  violations[c] = sum(i in numPreviousDayVehicles+1..numVehicles-ratios[c, Denominator])( %For every window
+    max(0, min(1,
+    (sum(j in i..i+ratios[c, Denominator])(associatedConstraints[schedule[j], c])) - ratios[c, Numerator]
+    ))
+  )
+);
 
 
 % The multipliers of each available objective, which are described in "Objectives."
