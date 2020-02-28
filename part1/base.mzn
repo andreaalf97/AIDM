@@ -52,10 +52,12 @@ array[1..numVehicles] of var 1..numVehicles: schedule;
 array[Constraints] of var int: violations;
 
 %number of violations of high priority constraint
-var int : highViolations = sum(c in Constraints where ratios[c,Priority] = 1)(violations[c]);
+var int : highViolations :: is_defined_var;
+constraint highViolations = sum(c in Constraints where ratios[c,Priority] = 1)(violations[c]) :: defines_var(highViolations);
 
 %number of violations of low priority constraint
-var int : lowViolations = sum(c in Constraints where ratios[c,Priority] = 0)(violations[c]);
+var int : lowViolations :: is_defined_var;
+constraint lowViolations = sum(c in Constraints where ratios[c,Priority] = 0)(violations[c]) :: defines_var(lowViolations);
 
 %Support variables
 
@@ -68,7 +70,7 @@ int : numPreviousDayVehicles = count(vehicles[..,Date],0); %Number of vehicles f
 
 %%%% The following are our custom constraints
 
-constraint all_different(schedule);
+constraint all_different(schedule) :: domain;
 
 
 %If a vehicle belongs to date D-1, then its place in the schedule is the same as its place in the "vehicles" array.
@@ -81,15 +83,15 @@ constraint forall (i in 1..numVehicles) ((vehicles[i,Date]=0 /\ schedule[i] != i
 constraint forall (i in numPreviousDayVehicles+1..numVehicles-paintBatchLimit)
   (
      nvalue([vehicles[schedule[j] , PaintColour] | j in i..i+paintBatchLimit]) > 1
-  );
+  ) :: domain;
  
 
  % Counts how many times the paint has been changed 
-var int : paintChanges;
+var int : paintChanges :: is_defined_var;
 constraint paintChanges = count(
   [ vehicles[schedule[i], PaintColour] != vehicles[schedule[i+1],PaintColour]  | i in numPreviousDayVehicles+1..numVehicles-1], 
     true
-);
+) :: defines_var(paintChanges);
 
 %For each contraint
 constraint forall (c in Constraints)
@@ -106,7 +108,7 @@ constraint forall (c in Constraints)
              )-ratios[c,Numerator]
            )
       ) 
-  );
+  ) :: bounds;
 
 
 % The multipliers of each available objective, which are described in "Objectives."
@@ -115,7 +117,8 @@ constraint forall (c in Constraints)
 % not included in the optimization objectives, its multiplier is 0.
 array[Objectives] of int: objectiveMultipliers;
 
-solve minimize (highViolations * objectiveMultipliers[HPRatioConstraints]) + (lowViolations * objectiveMultipliers[LPRatioConstraints]) + (paintChanges * objectiveMultipliers[PaintColourBatches]);
+%:: int_search(schedule, first_fail, indomain_min, complete)
+solve  minimize (highViolations * objectiveMultipliers[HPRatioConstraints]) + (lowViolations * objectiveMultipliers[LPRatioConstraints]) + (paintChanges * objectiveMultipliers[PaintColourBatches]);
 
 output[show(schedule), "\n violations: ", show(violations), "\n highViolations:", show(highViolations), "\n lowViolations:", show(lowViolations), 
 "\n totalViolations:", show(sum(violations)), "\n paintChanges:", show(paintChanges), 
