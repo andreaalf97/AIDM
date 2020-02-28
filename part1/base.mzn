@@ -41,6 +41,11 @@ array[1..numVehicles, Constraints] of 0..1: associatedConstraints;
 % from the ordering within this matrix.
 array[1..numVehicles, VehicleProperties] of int: vehicles;
 
+%function var bool: sameAttributes (var int: v1, var int: v2) = (vehicles[v1,PaintColour] = vehicles[v2,PaintColour] /\ forall (c in Constraints) 
+%(associatedConstraints[v1,c] = associatedConstraints[v2,c]));
+
+%constraint symmetry_breaking_constraint(forall (i,j in numPreviousDayVehicles+1..numVehicles where i<j) (sameAttributes(schedule[i],schedule[j]) -> %schedule[i] > schedule[j]));
+ 
 %%%% The following are our custom variables to be "solved"
 array[1..numVehicles] of var 1..numVehicles: schedule;
 
@@ -68,8 +73,8 @@ constraint all_different(schedule);
 
 %If a vehicle belongs to date D-1, then its place in the schedule is the same as its place in the "vehicles" array.
 %Both versions are kept to test which one is faster
-%constraint forall (i in 1..numVehicles) ((vehicles[i,Date]=0 /\ schedule[i] != i) = false);
-constraint forall (i in 1..numVehicles) (vehicles[i, Date] = 0 -> schedule[i] = i);
+constraint forall (i in 1..numVehicles) ((vehicles[i,Date]=0 /\ schedule[i] != i) = false);
+%constraint forall (i in 1..numVehicles) (vehicles[i, Date] = 0 -> schedule[i] = i);
 
 %nvalue = returns the number of distinct values in the array
 % This makes sure there are no long sequences of the same paint color
@@ -86,14 +91,22 @@ constraint paintChanges = count(
     true
 );
 
-%violations[c] is defined as the sum of 0 or 1, where it is 1 if the constraint is not respected for a certain window
-constraint forall (c in Constraints)( %For every constraint
-  violations[c] = sum(i in numPreviousDayVehicles+1..numVehicles-ratios[c, Denominator])( %For every window
-    max(0, min(1,
-    (sum(j in i..i+ratios[c, Denominator])(associatedConstraints[schedule[j], c])) - ratios[c, Numerator]
-    ))
-  )
-);
+%For each contraint
+constraint forall (c in Constraints)
+  % Count the violations of the current constraint in the whole schedule. Start by setting the starting points
+  % of the windows you are about to examine, from the first to the last one. For example, if the current constraint ratio
+  % is N/P, the starting point of the first window is #previousDayVehicles - P + 2, and the starting point of the last window is
+  % #totalVehicles - N, as indicated in the problem definition.
+  (violations[c] = sum(i in (numPreviousDayVehicles - ratios[c,Denominator] + 2)..(numVehicles-ratios[c,Numerator]))
+      % For each window (positions i to i+P, unless we reach the end of the schedule), count the number of violations
+      % of the current constraint, which is defined as "vehiclesWithConstraint - N". If the number of violations is negative,
+      % then it is actually zero (0), so that is the usage of "max".
+      (max(0,(
+        sum (j in i..min(i+ratios[c,Denominator]-1,numVehicles)) (associatedConstraints[schedule[j],c])
+             )-ratios[c,Numerator]
+           )
+      ) 
+  );
 
 
 % The multipliers of each available objective, which are described in "Objectives."
@@ -106,4 +119,4 @@ solve minimize (highViolations * objectiveMultipliers[HPRatioConstraints]) + (lo
 
 output[show(schedule), "\n violations: ", show(violations), "\n highViolations:", show(highViolations), "\n lowViolations:", show(lowViolations), 
 "\n totalViolations:", show(sum(violations)), "\n paintChanges:", show(paintChanges), 
-"\n minimizedGoal:", show((highViolations * objectiveMultipliers[HPRatioConstraints]) + (lowViolations * objectiveMultipliers[LPRatioConstraints]))];
+"\n minimizedGoal:", show((highViolations * objectiveMultipliers[HPRatioConstraints]) + (lowViolations * objectiveMultipliers[LPRatioConstraints]) + (paintChanges * objectiveMultipliers[PaintColourBatches]))];
