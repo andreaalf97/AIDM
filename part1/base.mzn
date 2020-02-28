@@ -78,12 +78,17 @@ constraint all_different(schedule) :: domain;
 constraint forall (i in 1..numVehicles) ((vehicles[i,Date]=0 /\ schedule[i] != i) = false);
 %constraint forall (i in 1..numVehicles) (vehicles[i, Date] = 0 -> schedule[i] = i);
 
+int : numOfColours = max(vehicles[..,PaintColour]);
+
 %nvalue = returns the number of distinct values in the array
 % This makes sure there are no long sequences of the same paint color
-constraint forall (i in numPreviousDayVehicles+1..numVehicles-paintBatchLimit)
-  (
-     nvalue([vehicles[schedule[j] , PaintColour] | j in i..i+paintBatchLimit]) > 1
-  ) :: domain;
+constraint 
+  if (forall (c in 1..numOfColours)(count(vehicles[..,PaintColour],c) <= paintBatchLimit))=false then 
+    forall (i in numPreviousDayVehicles+1..numVehicles-paintBatchLimit)
+      (
+         nvalue([vehicles[schedule[j] , PaintColour] | j in i..i+paintBatchLimit]) > 1
+      ) 
+  endif :: domain;
  
 
  % Counts how many times the paint has been changed 
@@ -117,8 +122,8 @@ constraint forall (c in Constraints)
 % not included in the optimization objectives, its multiplier is 0.
 array[Objectives] of int: objectiveMultipliers;
 
-%:: int_search(schedule, first_fail, indomain_min, complete)
-solve  minimize (highViolations * objectiveMultipliers[HPRatioConstraints]) + (lowViolations * objectiveMultipliers[LPRatioConstraints]) + (paintChanges * objectiveMultipliers[PaintColourBatches]);
+% :: int_search(schedule, input_order, indomain_max, complete)
+solve minimize (highViolations * objectiveMultipliers[HPRatioConstraints]) + (lowViolations * objectiveMultipliers[LPRatioConstraints]) + (paintChanges * objectiveMultipliers[PaintColourBatches]);
 
 output[show(schedule), "\n violations: ", show(violations), "\n highViolations:", show(highViolations), "\n lowViolations:", show(lowViolations), 
 "\n totalViolations:", show(sum(violations)), "\n paintChanges:", show(paintChanges), 
