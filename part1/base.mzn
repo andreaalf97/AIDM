@@ -75,7 +75,7 @@ constraint all_different(schedule) :: domain;
 
 %If a vehicle belongs to date D-1, then its place in the schedule is the same as its place in the "vehicles" array.
 %Both versions are kept to test which one is faster
-constraint forall (i in 1..numVehicles) ((vehicles[i,Date]=0 /\ schedule[i] != i) = false);
+constraint forall (i in 1..numVehicles) ((vehicles[i,Date]=0 /\ schedule[i] != i) = false) :: domain;
 %constraint forall (i in 1..numVehicles) (vehicles[i, Date] = 0 -> schedule[i] = i);
 
 int : numOfColours = max(vehicles[..,PaintColour]);
