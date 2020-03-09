@@ -2,7 +2,7 @@
 
 ## This repo contains all 3 projects of the course
 
-### Part 1: MiniZinc modelling
+### Part 1: MiniZinc modelling - DONE
 ### Part 2: Game Theory
 ### Part 3: Reinforcement Learning
 
