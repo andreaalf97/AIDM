@@ -70,10 +70,14 @@ public class Preference {
      * @return T/F
      */
     public boolean isBefore(int id1, int id2){
-        for (Job job : this.jobs)
+        for (Job job : this.jobs) {
             if (job.getId() == id1)
                 return true;
-            return false;
+            if (job.getId() == id2)
+                return false;
+        }
+
+        throw new RuntimeException("No job has been found");
     }
 
     public int getProcessingTime(int jobId){
