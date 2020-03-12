@@ -36,7 +36,7 @@ public class Preference {
         List<Integer> solution = new ArrayList<>();
 
         for(int i = 0; i < processingTimes.length; i++)
-            solution.add(new Integer(i));
+            solution.add(i);
 
         Collections.shuffle(solution);
 
