@@ -1,19 +1,20 @@
 package votingRules;
 
+import static votingRules.Preference.processingTimes;
+
 public class PTA_Copeland implements VotingRule {
 
     @Override
-    public void schedule(Preference[] preferences) {
+    public void schedule(int numJobs, Preference[] preferences) {
 
-        int numPreferences = preferences.length;
-        int numJobs = preferences[0].getSize();
+        int numAgents = preferences.length;
 
         // Initialize the scores with all 0
         Scores scores = new Scores(numJobs);
 
         // This double loop compares each job with all the others
-        for(int i = 1; i <= numJobs - 1; i++) {
-            for (int j = i + 1; j <= numJobs; j++){
+        for(int i = 0; i < numJobs - 1; i++) {
+            for (int j = i + 1; j < numJobs; j++){
 
                 int counter = 0;
                 // Now we count how many times the job with ID=i comes before the job with ID=j
@@ -23,10 +24,10 @@ public class PTA_Copeland implements VotingRule {
                     if (preference.isBefore(i, j))
                         counter++;  // Increment the counter
 
-                int p_i = preferences[0].getProcessingTime(i);
-                int p_j = preferences[0].getProcessingTime(j);
+                int p_i = processingTimes[i];
+                int p_j = processingTimes[j];
 
-                float threshold = ((float)(p_i * numPreferences))/(p_i + p_j);
+                float threshold = ((float)(p_i * numAgents))/(p_i + p_j);
                 if(counter > threshold)
                     scores.addOne(i);
                 else

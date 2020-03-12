@@ -5,6 +5,6 @@ package votingRules;
  */
 public interface VotingRule {
 
-    void schedule(Preference[] preferences);
+    void schedule(int numJobs, Preference[] preferences);
 
 }

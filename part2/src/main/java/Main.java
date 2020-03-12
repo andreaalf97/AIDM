@@ -11,15 +11,17 @@ public class Main {
 
         int numAgents = 5;
         int numJobs = 10;
+        Preference.processingTimes = new int[numJobs];
 
-        Preference[] preferences = SolutionTester.generateRandom(numAgents, numJobs);
+        Preference[] preferences = SolutionTester.generateRandom(numAgents);
+
         System.out.println("PREFERENCES:");
         for (Preference preference : preferences) {
             System.out.println(preference);
         }
 
         System.out.println("SCORES:");
-        new PTA_Copeland().schedule(preferences);
+        new PTA_Copeland().schedule(numJobs, preferences);
 
     }
 
