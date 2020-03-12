@@ -7,7 +7,7 @@ public class Scores {
     /**
      * This Map maps each job ID with the corresponding score
      */
-    private HashMap<Integer, Integer> scores;
+    private final HashMap<Integer, Integer> scores;
 
     /**
      * Constructs the Score object assigning 0 to all jobs
