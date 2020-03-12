@@ -77,9 +77,14 @@ public class Preference {
                 return false;
         }
 
-        throw new RuntimeException("No job has been found");
+        throw new RuntimeException("No job has been found with the given IDs");
     }
 
+    /**
+     * This returns the processing time of job with ID jobId
+     * @param jobId The ID of the requested job
+     * @return The processing time of the job
+     */
     public int getProcessingTime(int jobId){
         if(jobId < 1 || jobId > this.jobs.length)
             throw new RuntimeException("Job ID out of bounds");

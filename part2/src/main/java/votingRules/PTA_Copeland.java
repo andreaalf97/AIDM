@@ -36,6 +36,8 @@ public class PTA_Copeland implements VotingRule {
         }
 
         System.out.println(scores);
+        System.out.println("SORTED BY SCORE:");
+        System.out.println(scores.sorted());
     }
 
 }

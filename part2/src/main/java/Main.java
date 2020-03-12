@@ -9,8 +9,8 @@ public class Main {
 
     public static void main(String[] args){
 
-        int nAgents = 50;
-        int nJobs = 100;
+        int nAgents = 5;
+        int nJobs = 10;
 
         Preference[] preferences = SolutionTester.generateRandom(nAgents, nJobs);
         System.out.println("PREFERENCES:");

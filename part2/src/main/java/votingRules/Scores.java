@@ -1,20 +1,23 @@
 package votingRules;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class Scores {
 
     /**
-     * This array contains the scores of all jobs
-     * scores[i-1] contains the score of job with ID = i
+     * This Map maps each job ID with the corresponding score
      */
-    private int[] scores;
+    private Map<Integer, Integer> scores;
 
+    /**
+     * Constructs the Score object assigning 0 to all jobs
+     * @param nJobs The number of existing jobs
+     */
     public Scores(int nJobs){
-        this.scores = new int[nJobs];
+        this.scores = new HashMap<>();
 
-        for(int i = 0; i < nJobs; i++)
-            this.scores[i] = 0;
+        for(int i = 1; i <= nJobs; i++)
+            this.scores.put(i, 0);
     }
 
     /**
@@ -22,10 +25,10 @@ public class Scores {
      * @return The score of the given job
      */
     public int getScore(int jobId){
-        if(jobId <= 0 || jobId > scores.length)
+        if( ! this.scores.containsKey(jobId) )
             throw new RuntimeException("Job ID out of bounds");
 
-        return this.scores[jobId - 1];
+        return this.scores.get(jobId);
     }
 
     /**
@@ -34,10 +37,10 @@ public class Scores {
      * @param score The score we want to set
      */
     public void setScore(int jobId, int score){
-        if(jobId <= 0 || jobId > scores.length)
+        if( ! this.scores.containsKey(jobId) )
             throw new RuntimeException("Job ID out of bounds");
 
-        this.scores[jobId-1] = score;
+        this.scores.replace(jobId, score);
     }
 
     /**
@@ -45,19 +48,33 @@ public class Scores {
      * @param jobId The ID of the job
      */
     public void addOne(int jobId){
-        if(jobId <= 0 || jobId > scores.length)
+        if( ! this.scores.containsKey(jobId) )
             throw new RuntimeException("Job ID out of bounds");
 
-        this.scores[jobId-1]++;
+        int oldValue = this.scores.get(jobId);
+        this.scores.replace(jobId, oldValue + 1);
     }
 
     @Override
     public String toString() {
         String output = "";
 
-        for(int i = 0; i < scores.length; i++)
-            output += "Job " + (i+1) + ": " + scores[i] + "\n";
+        for(Map.Entry<Integer, Integer> entry : this.scores.entrySet())
+            output += "Job " + (entry.getKey()) + ": " + entry.getValue() + "\n";
 
         return output;
+    }
+
+    public ArrayList<Integer> sorted(){
+
+        List<Map.Entry<Integer, Integer>> list = new LinkedList<>(scores.entrySet());
+
+        list.sort((o1, o2) -> -(o1.getValue()).compareTo(o2.getValue()));
+
+        ArrayList<Integer> sorted = new ArrayList<>();
+        for(Map.Entry<Integer, Integer> entry : list)
+            sorted.add(entry.getKey());
+
+        return sorted;
     }
 }
