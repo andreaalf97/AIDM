@@ -57,12 +57,16 @@ public class Scores {
 
     @Override
     public String toString() {
-        String output = "";
+        StringBuilder output = new StringBuilder();
 
         for(Map.Entry<Integer, Integer> entry : this.scores.entrySet())
-            output += "Job " + (entry.getKey()) + ": " + entry.getValue() + "\n";
+            output.append("Job ")
+                    .append(entry.getKey())
+                    .append(": ")
+                    .append(entry.getValue())
+                    .append("\n");
 
-        return output;
+        return output.toString();
     }
 
     public ArrayList<Integer> sorted(){

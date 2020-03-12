@@ -94,13 +94,21 @@ public class Preference {
 
     @Override
     public String toString() {
-        String output = "[";
+        StringBuilder output = new StringBuilder("[");
 
         int i;
         for(i = 0; i < jobs.length - 1; i++)
-            output += "" + jobs[i].getId() + "(" + jobs[i].getProcessingTime() + "), ";
+            output.append(jobs[i].getId())
+                    .append("(")
+                    .append(jobs[i].getProcessingTime())
+                    .append("), ");
 
-        output += "" + jobs[i].getId() + "(" + jobs[i].getProcessingTime() + ")" + "]\n";
-        return output;
+        output.append(jobs[i].getId())
+                .append("(")
+                .append(jobs[i].getProcessingTime())
+                .append(")")
+                .append("]\n");
+
+        return output.toString();
     }
 }
