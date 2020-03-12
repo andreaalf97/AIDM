@@ -55,8 +55,7 @@ public class Preference {
     public boolean isBefore(int id1, int id2){
         int position1 = preferenceList.get(id1);
         int position2 = preferenceList.get(id2);
-        if (position1 < position2) return true;
-        return false;
+        return position1 < position2;
     }
 
     @Override
