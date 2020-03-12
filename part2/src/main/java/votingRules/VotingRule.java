@@ -6,6 +6,5 @@ package votingRules;
 public interface VotingRule {
 
     void schedule(Preference[] preferences);
-    void getRuntime();
 
 }
