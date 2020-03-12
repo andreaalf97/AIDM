@@ -32,19 +32,18 @@ public class Preference {
 
     /**
      * This contructor randomly generates this object
-     * @param nAgents The number of agents
      */
-    public Preference(int nAgents, int[] processingTimes){
+    public Preference(int[] processingTimes){
         List<Job> solution = new ArrayList<>();
         this.processingTimes = processingTimes;
 
-        for(int i = 1; i <= nAgents; i++)
+        for(int i = 1; i <= processingTimes.length; i++)
             solution.add(new Job(i, processingTimes[i-1]));
 
         Collections.shuffle(solution);
         this.jobs = new Job[solution.size()];
 
-        for(int i = 0; i < nAgents; i++)
+        for(int i = 0; i < processingTimes.length; i++)
             this.jobs[i] = solution.get(i);
 
     }

@@ -9,10 +9,10 @@ public class Main {
 
     public static void main(String[] args){
 
-        int nAgents = 5;
-        int nJobs = 10;
+        int numAgents = 5;
+        int numJobs = 10;
 
-        Preference[] preferences = SolutionTester.generateRandom(nAgents, nJobs);
+        Preference[] preferences = SolutionTester.generateRandom(numAgents, numJobs);
         System.out.println("PREFERENCES:");
         for (Preference preference : preferences) {
             System.out.println(preference);
