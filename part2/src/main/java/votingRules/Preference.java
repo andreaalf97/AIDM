@@ -24,7 +24,7 @@ public class Preference {
      * the agent chose for that job. This structure really helps us
      * perform quick lookups later on.
      */
-    private HashMap<Integer, Integer> preferenceList = new HashMap<Integer, Integer>();
+    private final HashMap<Integer, Integer> preferenceList = new HashMap<>();
 
     /**
      * This constructor randomly places each
