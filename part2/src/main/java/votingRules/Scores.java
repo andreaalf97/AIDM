@@ -16,7 +16,7 @@ public class Scores {
     public Scores(int numJobs){
         this.scores = new HashMap<>();
 
-        for(int i = 0; i <= numJobs; i++)
+        for(int i = 0; i < numJobs; i++)
             this.scores.put(i, 0);
     }
 
@@ -53,6 +53,18 @@ public class Scores {
 
         int oldValue = this.scores.get(jobId);
         this.scores.replace(jobId, oldValue + 1);
+    }
+
+    /**
+     * Remove 1 to the score of the given job
+     * @param jobId The ID of the job
+     */
+    public void removeOne(int jobId){
+        if( ! this.scores.containsKey(jobId) )
+            throw new RuntimeException("Job ID out of bounds");
+
+        int oldValue = this.scores.get(jobId);
+        this.scores.replace(jobId, oldValue - 1);
     }
 
     @Override
