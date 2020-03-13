@@ -4,6 +4,8 @@ import votingRules.Preference;
 
 import java.util.Random;
 
+import static votingRules.Preference.processingTimes;
+
 /**
  * This interface represents a tester which takes in a solution (and possibly the set of preferences)
  * and compares them
@@ -14,20 +16,18 @@ public interface SolutionTester {
 
     /**
      * This generates a set of random preferences
-     * @param agents The number of agents
-     * @param jobs The number of jobs
+     * @param numAgents The number of agents
      * @return A random set of preferences
      */
-    static Preference[] generateRandom(int agents, int jobs){
+    static Preference[] generateRandom(int numAgents){
         // Randomly generates the processing times of the jobs
-        int[] processingTimes = new int[jobs];
         for(int i = 0; i < processingTimes.length; i++)
             processingTimes[i] = (new Random().nextInt(99)) + 1;
 
         // Generates the preferences randomly, but the processing times are fixed
-        Preference[] preferences = new Preference[agents];
-        for(int i = 0; i < agents; i++)
-            preferences[i] = new Preference(jobs, processingTimes);
+        Preference[] preferences = new Preference[numAgents];
+        for(int i = 0; i < numAgents; i++)
+            preferences[i] = new Preference();
 
         return preferences;
     }

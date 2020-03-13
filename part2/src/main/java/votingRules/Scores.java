@@ -7,16 +7,16 @@ public class Scores {
     /**
      * This Map maps each job ID with the corresponding score
      */
-    private Map<Integer, Integer> scores;
+    private final HashMap<Integer, Integer> scores;
 
     /**
      * Constructs the Score object assigning 0 to all jobs
-     * @param nJobs The number of existing jobs
+     * @param numJobs The number of existing jobs
      */
-    public Scores(int nJobs){
+    public Scores(int numJobs){
         this.scores = new HashMap<>();
 
-        for(int i = 1; i <= nJobs; i++)
+        for(int i = 0; i <= numJobs; i++)
             this.scores.put(i, 0);
     }
 
@@ -76,8 +76,10 @@ public class Scores {
         list.sort((o1, o2) -> -(o1.getValue()).compareTo(o2.getValue()));
 
         ArrayList<Integer> sorted = new ArrayList<>();
-        for(Map.Entry<Integer, Integer> entry : list)
+        for(Map.Entry<Integer, Integer> entry : list) {
             sorted.add(entry.getKey());
+            //System.out.println(entry.getValue());
+        }
 
         return sorted;
     }
