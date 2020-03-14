@@ -10,7 +10,7 @@ import java.util.List;
 
 public class GiniIndexTester {
 
-    public static float getIndex(int[] tardiness){
+    public static double getIndex(int[] tardiness, int numAgents){
 
         List<Integer> list = new ArrayList<Integer>();
         for(int i = 0; i < tardiness.length; i++)
@@ -18,15 +18,35 @@ public class GiniIndexTester {
 
         Collections.sort(list);
 
-        System.out.println(list);
+        double totalTardiness = 0;
+        for(int t : list)
+            totalTardiness += t;
 
-        return 0;
+        double fractionPopulation = 1.0 / numAgents;
+        double total = 0;
+
+        for(int i = 0; i < list.size(); i++){
+
+//            System.out.println("fractionPopulation: " + fractionPopulation);
+
+            double fractionIncome = ((double)tardiness[i]) / totalTardiness;
+//            System.out.println("fractionIncome: " + fractionIncome);
+
+            double fractionRicher = ((double)(i)) / list.size();
+//            System.out.println("fractionRicher: " + fractionRicher);
+
+            total += fractionIncome * (fractionPopulation + (2 * fractionRicher));
+//            System.out.println("totalTardiness: " + totalTardiness);
+
+        }
+
+        return 1 - total;
     }
 
     public static void main(String[] args){
 
-        int numAgents = 50;
-        int numJobs = 10;
+        int numAgents = 500;
+        int numJobs = 30;
 
         TestInstance instance = SolutionTester.generateRandom(numAgents, numJobs);
 
@@ -36,8 +56,8 @@ public class GiniIndexTester {
         SumOfTardinessTester tester = new SumOfTardinessTester(numJobs, numAgents);
         tester.calculateSumOfTardiness(schedule, instance.preferences, instance.processingTimes);
 
-        int[] tardiness = new SumOfTardinessTester(numJobs, numAgents).getAgentTardiness();
+        int[] tardiness = tester.getAgentTardiness();
 
-        System.out.println(GiniIndexTester.getIndex(tardiness));
+        System.out.println(GiniIndexTester.getIndex(tardiness, numAgents));
     }
 }
