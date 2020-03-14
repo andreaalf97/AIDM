@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args){
 
-        int numAgents = 5;
+        int numAgents = 10;
         int numJobs = 10;
         Preference.processingTimes = new int[numJobs];
 
