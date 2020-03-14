@@ -14,6 +14,7 @@ public class SumOfTardinessTester {
     private int[] completionTimes;
     private int[] completionTimesPreference;
 
+
     public SumOfTardinessTester(int numJobs, int numAgents){
         this.numJobs = numJobs;
         this.numAgents = numAgents;

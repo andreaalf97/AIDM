@@ -2,9 +2,11 @@ package votingRules;
 
 import benchmarkGenerator.TestInstance;
 import testers.CondorcetConsistencyTester;
+import testers.ParetoEfficiencyTester;
 import testers.SumOfTardinessTester;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PTA_Copeland implements VotingRule {
 
@@ -15,6 +17,7 @@ public class PTA_Copeland implements VotingRule {
         int numJobs = testInstance.numJobs;
         CondorcetConsistencyTester condorsetTests = new CondorcetConsistencyTester(numJobs, numAgents);
         SumOfTardinessTester sumOfTardTests = new SumOfTardinessTester(numJobs, numAgents);
+        ParetoEfficiencyTester paretoTests = new ParetoEfficiencyTester(numJobs, numAgents);
 
         // Initialize the scores with all 0
         Scores scores = new Scores(numJobs);
@@ -96,7 +99,13 @@ public class PTA_Copeland implements VotingRule {
         System.out.println("--------------------------------------------------------------------");
         System.out.println("Sum of Tardiness after: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
 
+        System.out.println("Pareto Efficient schedule: " + paretoTests.isScheduleParetoEfficient(schedule));
+        int[] agentTardiness = sumOfTardTests.getAgentTardiness();
+        System.out.println("Agent Tardiness: " + Arrays.toString(agentTardiness));
+        System.out.println("Pareto Efficient per agent: " + Arrays.toString(paretoTests.agentParetoEfficiency(agentTardiness)));
+
         return schedule;
+
 
     }
 
