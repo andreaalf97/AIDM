@@ -20,7 +20,7 @@ public class TestInstance implements Serializable {
      * so processingTimes[2] is the processing time
      * of job with ID = 2.
      */
-    public final int[] processingTimes;  //{44, 37, 49, 43, 51, 46, 53, 45, 52, 58};
+    public final int[] processingTimes; //{44, 37, 49, 43, 51, 46, 53, 45, 52, 58};
 
     /**
      * This array contains all the preferences
