@@ -50,7 +50,7 @@ public class TestInstance implements Serializable {
         return "TestInstance{" +
                 "numAgents=" + numAgents +
                 ", numJobs=" + numJobs + "\n" +
-                ", processing times: " + processingTimes + "\n" +
+                ", processing times: " + Arrays.toString(processingTimes) + "\n" +
                 ", preferences=" + Arrays.toString(preferences) +
                 '}';
     }
