@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class PTA_Copeland implements VotingRule {
 
     @Override
-    public void schedule(TestInstance testInstance) {
+    public int[] schedule(TestInstance testInstance) {
 
         int numAgents = testInstance.numAgents;
         int numJobs = testInstance.numJobs;
@@ -63,7 +63,13 @@ public class PTA_Copeland implements VotingRule {
         System.out.println("SORTED BY SCORE:");
         ArrayList scheduleArrayList = scores.sorted();
         System.out.println(scheduleArrayList);
-        Object[] schedule = scheduleArrayList.toArray();
+        //Object[] schedule = scheduleArrayList.toArray();
+
+        int[] schedule = new int[numJobs];
+        for(int i = 0; i < numJobs; i++){
+            schedule[i] = (int)scheduleArrayList.get(i);
+        }
+
         boolean isThereWinner = condorsetTests.isThereCondorcetWinner();
         System.out.println("isThereWinner: " + isThereWinner);
         boolean isCondorcetWinner = condorsetTests.testCondorcetWinner(schedule);
@@ -90,7 +96,7 @@ public class PTA_Copeland implements VotingRule {
         System.out.println("--------------------------------------------------------------------");
         System.out.println("Sum of Tardiness after: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
 
-
+        return schedule;
 
     }
 
