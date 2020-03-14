@@ -1,5 +1,7 @@
 package testers;
 
+import static votingRules.Preference.processingTimes;
+
 public class CondorcetConsistencyTester {
 
     private int numJobs;
@@ -89,6 +91,32 @@ public class CondorcetConsistencyTester {
         }
         System.out.println("No Condorcet winner exists");
         return false;
+    }
+
+    /** The following function counts the number of PTA-Condorcet violations
+     * in the schedule, as PTA-Condorcet consistency is defined in the paper
+     * @param schedule The array-ranking
+     */
+    public int countPTACondorcetViolations(Object[] schedule){
+        int count = 0;
+        for(int i = 0; i < numJobs - 1; i++) {
+            for(int j = i+1; j < numJobs; j++) {
+                int job_left = (Integer) schedule[i];
+                int job_right = (Integer) schedule[j];
+                int p_i = processingTimes[job_left];
+                int p_j = processingTimes[job_right];
+                float threshold = (float)(p_j * numAgents) / (float)(p_j + p_i);
+                //float threshold2 = (float)(p_i * numAgents) / (float)(p_i + p_j);
+                if (votes[job_right][job_left] > threshold) {
+                    System.out.println(job_left + " > " + job_right + " but the score of job " + job_right + " is " +
+                            votes[job_right][job_left] + " , which is greater than the threshold " + threshold);
+                    //System.out.println(job_left + " > " + job_right + " and the score of job " + job_left + " is " +
+                    //        votes[job_left][job_right] + " , which is less than the threshold " + threshold2);
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
 

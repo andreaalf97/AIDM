@@ -21,15 +21,15 @@ public class PTA_Copeland implements VotingRule {
         for(int i = 0; i < numJobs - 1; i++) {
             for (int j = i + 1; j < numJobs; j++) {
 
-                int counter1 = 0;
-                int counter2 = 0;
+                int counter_i = 0;
+                int counter_j = 0;
                 // Now we count how many times the job with ID=i comes before the job with ID=j
                 // For all preferences
                 // If job with ID=i comes before the job with ID=j
                 for (Preference preference : preferences)
                     if (preference.isBefore(i, j))
-                        counter1++;  // Increment the counter
-                    else counter2++;
+                        counter_i++;  // Increment the counter
+                    else counter_j++;
 
 
                 int p_i = processingTimes[i];
@@ -38,21 +38,21 @@ public class PTA_Copeland implements VotingRule {
                 // The threshold of job i, as given by our definition
                 // This rule is the main and only way the processing times of the
                 // jobs are taken into account for the final "true" ranking
-                float threshold = (p_i * numAgents) / (p_i + p_j);
+                float threshold = (float)(p_i * numAgents) / (float)(p_i + p_j);
 
-                if (counter1 == threshold) {    //If the number of votes equals the threshold for job i,
+                if (counter_i == threshold) {    //If the number of votes equals the threshold for job i,
                     // the same applies for job j and its corresponding threshold, because math, so give both of them a point
                     scores.addOne(i);
                     scores.addOne(j);
-                } else if (counter1 > threshold) {  //Give a point to job i for surpassing the threshold
+                } else if (counter_i > threshold) {  //Give a point to job i for surpassing the threshold
                     scores.addOne(i);
                 } else { //Give a point to job j for surpassing its threshold (again, because math)
                     scores.addOne(j);
                 }
 
                 // Store the votes each job got against the other
-                CondorcetConsistencyTester.votes[i][j] = counter1;
-                CondorcetConsistencyTester.votes[j][i] = counter2;
+                CondorcetConsistencyTester.votes[i][j] = counter_i;
+                CondorcetConsistencyTester.votes[j][i] = counter_j;
 
             }
         }
@@ -66,6 +66,11 @@ public class PTA_Copeland implements VotingRule {
         System.out.println("isThereWinner: " + isThereWinner);
         boolean isCondorcetWinner = condorsetTests.testCondorcetWinner(schedule);
         System.out.println("isCondorcetWinner: " + isCondorcetWinner);
+
+        System.out.println("--------------------------------------------------------------------");
+        System.out.println("PTA violations before: " + condorsetTests.countPTACondorcetViolations(schedule));
+        System.out.println("--------------------------------------------------------------------");
+
         int[] results = new int[2];
         results[0] = 0;
         results[1] = 0;
@@ -75,6 +80,11 @@ public class PTA_Copeland implements VotingRule {
             results = condorsetTests.testCondorcetConsistency(schedule, results[1]);
             System.out.println("isCondorcetConsistent (1==YES):" + results[0]);
         }
+
+        System.out.println("--------------------------------------------------------------------");
+        System.out.println("PTA violations after: " + condorsetTests.countPTACondorcetViolations(schedule));
+
+
     }
 
 }
