@@ -16,7 +16,7 @@ public class Preference {
      * so processingTimes[2] is the processing time
      * of job with ID = 2.
      */
-    public static int[] processingTimes;
+    public static int[] processingTimes;  //{44, 37, 49, 43, 51, 46, 53, 45, 52, 58};
 
     /**
      * This hashmap represents the preference list of each agent.
@@ -25,6 +25,10 @@ public class Preference {
      * perform quick lookups later on.
      */
     private final HashMap<Integer, Integer> preferenceList = new HashMap<>();
+
+    public HashMap<Integer, Integer> getList(){
+        return this.preferenceList;
+    }
 
     /**
      * This constructor randomly places each
@@ -43,6 +47,11 @@ public class Preference {
         for(int i = 0; i < processingTimes.length; i++)
             preferenceList.put(i, solution.get(i));
 
+    }
+
+    public Preference(int[] preferences){
+        for(int i = 0; i < processingTimes.length; i++)
+            preferenceList.put(preferences[i], i);
     }
 
 

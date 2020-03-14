@@ -1,6 +1,7 @@
 package votingRules;
 
 import testers.CondorcetConsistencyTester;
+import testers.SumOfTardinessTester;
 
 import java.util.ArrayList;
 
@@ -13,6 +14,7 @@ public class PTA_Copeland implements VotingRule {
 
         int numAgents = preferences.length;
         CondorcetConsistencyTester condorsetTests = new CondorcetConsistencyTester(numJobs, numAgents);
+        SumOfTardinessTester sumOfTardTests = new SumOfTardinessTester(numJobs, numAgents);
 
         // Initialize the scores with all 0
         Scores scores = new Scores(numJobs);
@@ -69,6 +71,7 @@ public class PTA_Copeland implements VotingRule {
 
         System.out.println("--------------------------------------------------------------------");
         System.out.println("PTA violations before: " + condorsetTests.countPTACondorcetViolations(schedule));
+        System.out.println("Sum of Tardiness before: " + sumOfTardTests.calculateSumOfTardiness(schedule, preferences));
         System.out.println("--------------------------------------------------------------------");
 
         int[] results = new int[2];
@@ -83,6 +86,10 @@ public class PTA_Copeland implements VotingRule {
 
         System.out.println("--------------------------------------------------------------------");
         System.out.println("PTA violations after: " + condorsetTests.countPTACondorcetViolations(schedule));
+
+        System.out.println("--------------------------------------------------------------------");
+        System.out.println("Sum of Tardiness after: " + sumOfTardTests.calculateSumOfTardiness(schedule, preferences));
+
 
 
     }

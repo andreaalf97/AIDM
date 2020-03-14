@@ -60,8 +60,8 @@ public class CondorcetConsistencyTester {
     public boolean testCondorcetWinner(Object[] schedule){
         int winner = (Integer) schedule[0];
         for(int i = 1; i < numJobs; i++) {
-            int job_right =  (Integer) schedule[i];
-            if (votes[job_right][winner]>numAgents/2) {
+            int job_right = (Integer) schedule[i];
+            if (votes[job_right][winner] > numAgents/2) {
                 System.out.println(winner + " > " + job_right + " but the score of job " + job_right + " is " +
                         votes[job_right][winner] + " , which is greater than half the agents");
                 return false;
@@ -78,7 +78,7 @@ public class CondorcetConsistencyTester {
             boolean lost = false;
             for(int j = 0; j < numJobs; j++) {
                 if (i != j){
-                    if (votes[j][i] > votes[i][j]) {
+                    if (votes[j][i] >= votes[i][j]) {
                         lost = true;
                         break;
                     }
