@@ -4,9 +4,9 @@ import testers.SolutionTester;
 
 import java.io.*;
 
-public class RandomTestGenerator implements TestGenerator, Serializable {
+public class RandomTestGenerator implements TestGenerator {
 
-    private String filePath = this.getClass().getClassLoader().getResource("tests/randomTest.instances").getPath();;
+    private String filePath = "/home/andreaalf/Documents/AIDM/AIDM/part2/src/main/resources/tests/randomTest.instances";
 
     @Override
     public TestInstance[] generateBenchmark() {
@@ -46,19 +46,19 @@ public class RandomTestGenerator implements TestGenerator, Serializable {
             e.printStackTrace();
         }
 
-        /*try {
-            FileInputStream file = new FileInputStream(generator.filePath);
-            ObjectInputStream in = new ObjectInputStream(file);
-
-            TestInstance[] readTest = (TestInstance[])in.readObject();
-            in.close();
-            file.close();
-
-            System.out.println(readTest[0]);
-        }
-        catch (IOException | ClassNotFoundException e){
-            e.printStackTrace();
-        }*/
+//        try {
+//            FileInputStream file = new FileInputStream(generator.filePath);
+//            ObjectInputStream in = new ObjectInputStream(file);
+//
+//            TestInstance[] readTest = (TestInstance[])in.readObject();
+//            in.close();
+//            file.close();
+//
+//            System.out.println(readTest[0]);
+//        }
+//        catch (IOException | ClassNotFoundException e){
+//            e.printStackTrace();
+//        }
 
     }
 
