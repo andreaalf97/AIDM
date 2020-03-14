@@ -40,15 +40,9 @@ public class TestInstance implements Serializable {
         this.preferences = preferences;
 
         Random rand = new Random();
-        List<Integer> list = new ArrayList<>();
-        for(int i = 0; i < numJobs; i++)
-            list.add(rand.nextInt(50) + 50);
-
-        Collections.shuffle(list);
-
         this.processingTimes = new int[numJobs];
         for(int i = 0; i < numJobs; i++)
-            this.processingTimes[i] = list.get(i);
+            this.processingTimes[i] = rand.nextInt(50) + 50;
     }
 
     @Override
