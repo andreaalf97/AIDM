@@ -14,34 +14,31 @@ public class SumOfTardinessTester {
     private int[] completionTimes;
     private int[] completionTimesPreference;
 
-    public int[] getAgentTardiness(){
-        return this.agentTardiness;
+
+    public SumOfTardinessTester(int numJobs, int numAgents){
+        this.numJobs = numJobs;
+        this.numAgents = numAgents;
+        agentTardiness = new int[this.numAgents];
+        completionTimes = new int[this.numJobs];
+        completionTimesPreference = new int[this.numJobs];
     }
 
-    public SumOfTardinessTester(int n, int a){
-        this.numJobs = n;
-        this.numAgents = a;
-        agentTardiness = new int[numAgents];
-        completionTimes = new int[numJobs];
-        completionTimesPreference = new int[numJobs];
-    }
-
-    public void calculateCompletionTimes(Object[] schedule, boolean isPreferenceOfAgent, int[] processingTimes){
+    public void calculateCompletionTimes(int[] schedule, boolean isPreferenceOfAgent, int[] processingTimes){
         int[] compTimes = completionTimes;
         if (isPreferenceOfAgent) compTimes = completionTimesPreference;
         compTimes[0] = processingTimes[(Integer)schedule[0]];
         for(int i = 1; i < numJobs; i++) {
-            int job =  (Integer) schedule[i];
+            int job =  schedule[i];
             compTimes[i] = compTimes[i-1] + processingTimes[job];
         }
     }
 
-    public int calculateSumOfTardiness(Object[] schedule, Preference[] preferences, int[] processingTimes){
+    public int calculateSumOfTardiness(int[] schedule, Preference[] preferences, int[] processingTimes){
         int sum = 0;
         calculateCompletionTimes(schedule, false, processingTimes);
         for (int i=0; i<numAgents; i++){
             HashMap<Integer, Integer> preferenceList = preferences[i].getList();
-            Integer[] temp = new Integer[numJobs];
+            int[] temp = new int[numJobs];
             for(int jobID = 0; jobID < numJobs; jobID++) {
                 int position = preferenceList.get(jobID);
                 temp[position] = jobID;
@@ -59,6 +56,10 @@ public class SumOfTardinessTester {
         }
 
         return sum;
+    }
+
+    public int[] getAgentTardiness(){
+        return this.agentTardiness.clone();
     }
 
 }

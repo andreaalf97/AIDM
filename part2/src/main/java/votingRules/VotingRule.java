@@ -7,6 +7,6 @@ import benchmarkGenerator.TestInstance;
  */
 public interface VotingRule {
 
-    void schedule(TestInstance testInstance);
+    int[] schedule(TestInstance testInstance);
 
 }

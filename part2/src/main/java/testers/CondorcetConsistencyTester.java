@@ -23,7 +23,7 @@ public class CondorcetConsistencyTester {
      * @param schedule The array-ranking that we will check for consistency
      * @param startIndex The index from which to start checking (only used for optimization purposes)
      */
-    public int[] testCondorcetConsistency(Object[] schedule, int startIndex){
+    public int[] testCondorcetConsistency(int[] schedule, int startIndex){
         // The returnThis array stores the value 0/1 in its first position if the schedule is consistent,
         // and if not, stores the index from where the next consistency-check should start (for optimization purposes)
         int[] returnThis = new int[2];
@@ -56,7 +56,7 @@ public class CondorcetConsistencyTester {
      * The following function tests if the winner of the schedule is the Condorcet winner
      * @param schedule The array-ranking
      */
-    public boolean testCondorcetWinner(Object[] schedule){
+    public boolean testCondorcetWinner(int[] schedule){
         int winner = (Integer) schedule[0];
         for(int i = 1; i < numJobs; i++) {
             int job_right = (Integer) schedule[i];
@@ -96,7 +96,7 @@ public class CondorcetConsistencyTester {
      * in the schedule, as PTA-Condorcet consistency is defined in the paper
      * @param schedule The array-ranking
      */
-    public int countPTACondorcetViolations(Object[] schedule, int[] processingTimes){
+    public int countPTACondorcetViolations(int[] schedule, int[] processingTimes){
         int count = 0;
         for(int i = 0; i < numJobs - 1; i++) {
             for(int j = i+1; j < numJobs; j++) {
