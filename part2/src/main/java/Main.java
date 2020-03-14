@@ -11,9 +11,8 @@ public class Main {
 
         int numAgents = 10;
         int numJobs = 10;
-        Preference.processingTimes = new int[numJobs];
 
-        Preference[] preferences = SolutionTester.generateRandom(numAgents);
+        Preference[] preferences = SolutionTester.generateRandom(numAgents, numJobs);
 
         System.out.println("PREFERENCES:");
         for (Preference preference : preferences) {

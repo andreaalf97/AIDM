@@ -12,18 +12,29 @@ import static votingRules.Preference.processingTimes;
  */
 public interface SolutionTester {
 
+    /**
+     * This method generates a set of preferences.
+     * The number of jobs is given by Preference.processingTimes
+     * @param numAgents The number of agents
+     * @param numJobs The number of jobs per preference
+     * @return A set of preferences
+     */
     Preference[] generate(int numAgents, int numJobs);
 
     /**
      * This generates a set of random preferences
      * @param numAgents The number of agents
+     * @param numJobs The number of jobs
      * @return A random set of preferences
      */
-    static Preference[] generateRandom(int numAgents){
+    static Preference[] generateRandom(int numAgents, int numJobs){
+
+        // Initialize the static value of all preferences
+        Preference.processingTimes = new int[numJobs];
+
         // Randomly generates the processing times of the jobs
         for(int i = 0; i < processingTimes.length; i++)
             processingTimes[i] = (new Random().nextInt(99)) + 1;
-
 
         // Generates the preferences randomly, but the processing times are fixed
         Preference[] preferences = new Preference[numAgents];
