@@ -4,7 +4,6 @@ import votingRules.Preference;
 
 import java.util.HashMap;
 
-import static votingRules.Preference.processingTimes;
 
 public class SumOfTardinessTester {
 
@@ -23,7 +22,7 @@ public class SumOfTardinessTester {
         completionTimesPreference = new int[numJobs];
     }
 
-    public void calculateCompletionTimes(Object[] schedule, boolean isPreferenceOfAgent){
+    public void calculateCompletionTimes(Object[] schedule, boolean isPreferenceOfAgent, int[] processingTimes){
         int[] compTimes = completionTimes;
         if (isPreferenceOfAgent) compTimes = completionTimesPreference;
         compTimes[0] = processingTimes[(Integer)schedule[0]];
@@ -33,9 +32,9 @@ public class SumOfTardinessTester {
         }
     }
 
-    public int calculateSumOfTardiness(Object[] schedule, Preference[] preferences){
+    public int calculateSumOfTardiness(Object[] schedule, Preference[] preferences, int[] processingTimes){
         int sum = 0;
-        calculateCompletionTimes(schedule, false);
+        calculateCompletionTimes(schedule, false, processingTimes);
         for (int i=0; i<numAgents; i++){
             HashMap<Integer, Integer> preferenceList = preferences[i].getList();
             Integer[] temp = new Integer[numJobs];
@@ -43,7 +42,7 @@ public class SumOfTardinessTester {
                 int position = preferenceList.get(jobID);
                 temp[position] = jobID;
             }
-            calculateCompletionTimes(temp, true);
+            calculateCompletionTimes(temp, true, processingTimes);
             agentTardiness[i] = 0;
             for (int pos=0; pos<numJobs; pos++){
                 int completedTimeSchedule = completionTimes[pos];

@@ -6,7 +6,7 @@ import java.io.*;
 
 public class RandomTestGenerator implements TestGenerator, Serializable {
 
-    private String filePath = this.getClass().getClassLoader().getResource("tests/randomTest.txt").getPath();;
+    private String filePath = this.getClass().getClassLoader().getResource("tests/randomTest.instances").getPath();;
 
     @Override
     public TestInstance[] generateBenchmark() {
@@ -17,11 +17,7 @@ public class RandomTestGenerator implements TestGenerator, Serializable {
         for(int numAgents = 30; numAgents <= 35; numAgents++){
             for(int numJobs = 5; numJobs <= 25; numJobs += 5){
 
-                instances[positionCounter] = new TestInstance(
-                        numAgents,
-                        numJobs,
-                        SolutionTester.generateRandom(numAgents, numJobs)
-                );
+                instances[positionCounter] = SolutionTester.generateRandom(numAgents, numJobs);
 
                 positionCounter++;
             }
@@ -37,6 +33,7 @@ public class RandomTestGenerator implements TestGenerator, Serializable {
         RandomTestGenerator generator = new RandomTestGenerator();
         TestInstance[] tests = generator.generateBenchmark();
 
+
         try {
             FileOutputStream file = new FileOutputStream(generator.filePath);
             ObjectOutputStream out = new ObjectOutputStream(file);
@@ -48,6 +45,20 @@ public class RandomTestGenerator implements TestGenerator, Serializable {
         catch (IOException e){
             e.printStackTrace();
         }
+
+        /*try {
+            FileInputStream file = new FileInputStream(generator.filePath);
+            ObjectInputStream in = new ObjectInputStream(file);
+
+            TestInstance[] readTest = (TestInstance[])in.readObject();
+            in.close();
+            file.close();
+
+            System.out.println(readTest[0]);
+        }
+        catch (IOException | ClassNotFoundException e){
+            e.printStackTrace();
+        }*/
 
     }
 

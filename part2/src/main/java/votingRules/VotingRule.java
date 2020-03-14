@@ -1,10 +1,12 @@
 package votingRules;
 
+import benchmarkGenerator.TestInstance;
+
 /**
  * This interface represents a voting rule
  */
 public interface VotingRule {
 
-    void schedule(int numJobs, Preference[] preferences);
+    void schedule(TestInstance testInstance);
 
 }

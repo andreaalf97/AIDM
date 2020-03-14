@@ -1,13 +1,15 @@
 package votingRules;
 
-import static votingRules.Preference.processingTimes;
+
+import benchmarkGenerator.TestInstance;
 
 public class Copeland implements VotingRule {
 
 
     @Override
-    public void schedule(int numJobs, Preference[] preferences) {
-        int numAgents = preferences.length;
+    public void schedule(TestInstance testInstance) {
+        int numAgents = testInstance.numAgents;
+        int numJobs = testInstance.numJobs;
 
         // Initialize the scores with all 0
         Scores scores = new Scores(numJobs);
@@ -20,12 +22,12 @@ public class Copeland implements VotingRule {
                 // Now we count how many times the job with ID=i comes before the job with ID=j
                 // For all preferences
                 // If job with ID=i comes before the job with ID=j
-                for (Preference preference : preferences)
+                for (Preference preference : testInstance.preferences)
                     if (preference.isBefore(i, j))
                         counter++;  // Increment the counter
 
-                int p_i = processingTimes[i];
-                int p_j = processingTimes[j];
+                int p_i = testInstance.processingTimes[i];
+                int p_j = testInstance.processingTimes[j];
 
                 float threshold = ((float)(p_i * numAgents))/(p_i + p_j);
                 if(counter > threshold)

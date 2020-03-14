@@ -1,18 +1,18 @@
 package votingRules;
 
+import benchmarkGenerator.TestInstance;
 import testers.CondorcetConsistencyTester;
 import testers.SumOfTardinessTester;
 
 import java.util.ArrayList;
 
-import static votingRules.Preference.processingTimes;
-
 public class PTA_Copeland implements VotingRule {
 
     @Override
-    public void schedule(int numJobs, Preference[] preferences) {
+    public void schedule(TestInstance testInstance) {
 
-        int numAgents = preferences.length;
+        int numAgents = testInstance.numAgents;
+        int numJobs = testInstance.numJobs;
         CondorcetConsistencyTester condorsetTests = new CondorcetConsistencyTester(numJobs, numAgents);
         SumOfTardinessTester sumOfTardTests = new SumOfTardinessTester(numJobs, numAgents);
 
@@ -28,14 +28,14 @@ public class PTA_Copeland implements VotingRule {
                 // Now we count how many times the job with ID=i comes before the job with ID=j
                 // For all preferences
                 // If job with ID=i comes before the job with ID=j
-                for (Preference preference : preferences)
+                for (Preference preference : testInstance.preferences)
                     if (preference.isBefore(i, j))
                         counter_i++;  // Increment the counter
                     else counter_j++;
 
 
-                int p_i = processingTimes[i];
-                int p_j = processingTimes[j];
+                int p_i = testInstance.processingTimes[i];
+                int p_j = testInstance.processingTimes[j];
 
                 // The threshold of job i, as given by our definition
                 // This rule is the main and only way the processing times of the
@@ -70,8 +70,8 @@ public class PTA_Copeland implements VotingRule {
         System.out.println("isCondorcetWinner: " + isCondorcetWinner);
 
         System.out.println("--------------------------------------------------------------------");
-        System.out.println("PTA violations before: " + condorsetTests.countPTACondorcetViolations(schedule));
-        System.out.println("Sum of Tardiness before: " + sumOfTardTests.calculateSumOfTardiness(schedule, preferences));
+        System.out.println("PTA violations before: " + condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes));
+        System.out.println("Sum of Tardiness before: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
         System.out.println("--------------------------------------------------------------------");
 
         int[] results = new int[2];
@@ -85,10 +85,10 @@ public class PTA_Copeland implements VotingRule {
         }
 
         System.out.println("--------------------------------------------------------------------");
-        System.out.println("PTA violations after: " + condorsetTests.countPTACondorcetViolations(schedule));
+        System.out.println("PTA violations after: " + condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes));
 
         System.out.println("--------------------------------------------------------------------");
-        System.out.println("Sum of Tardiness after: " + sumOfTardTests.calculateSumOfTardiness(schedule, preferences));
+        System.out.println("Sum of Tardiness after: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
 
 
 
