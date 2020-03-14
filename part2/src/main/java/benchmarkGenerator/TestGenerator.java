@@ -5,6 +5,6 @@ package benchmarkGenerator;
  */
 public interface TestGenerator {
 
-    TestInstance getRandomTest();
+    TestInstance[] generateBenchmark();
 
 }

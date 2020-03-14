@@ -1,5 +1,6 @@
 package votingRules;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * This interface is used to represent a single preference by an agent
  */
-public class Preference {
+public class Preference implements Serializable {
 
     /**
      * This array contains the processing time for each job.
