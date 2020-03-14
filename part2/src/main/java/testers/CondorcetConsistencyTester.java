@@ -1,6 +1,5 @@
 package testers;
 
-import static votingRules.Preference.processingTimes;
 
 public class CondorcetConsistencyTester {
 
@@ -97,7 +96,7 @@ public class CondorcetConsistencyTester {
      * in the schedule, as PTA-Condorcet consistency is defined in the paper
      * @param schedule The array-ranking
      */
-    public int countPTACondorcetViolations(Object[] schedule){
+    public int countPTACondorcetViolations(Object[] schedule, int[] processingTimes){
         int count = 0;
         for(int i = 0; i < numJobs - 1; i++) {
             for(int j = i+1; j < numJobs; j++) {

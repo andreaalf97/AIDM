@@ -1,10 +1,7 @@
 package testers;
 
+import benchmarkGenerator.TestInstance;
 import votingRules.Preference;
-
-import java.util.Random;
-
-import static votingRules.Preference.processingTimes;
 
 /**
  * This interface represents a tester which takes in a solution (and possibly the set of preferences)
@@ -12,23 +9,27 @@ import static votingRules.Preference.processingTimes;
  */
 public interface SolutionTester {
 
+    /**
+     * This method generates a set of preferences.
+     * The number of jobs is given by Preference.processingTimes
+     * @param numAgents The number of agents
+     * @param numJobs The number of jobs per preference
+     * @return A set of preferences
+     */
     Preference[] generate(int numAgents, int numJobs);
 
     /**
      * This generates a set of random preferences
      * @param numAgents The number of agents
+     * @param numJobs The number of jobs
      * @return A random set of preferences
      */
-    static Preference[] generateRandom(int numAgents){
-        // Randomly generates the processing times of the jobs
-        for(int i = 0; i < processingTimes.length; i++)
-            processingTimes[i] = (new Random().nextInt(99)) + 1;
-
+    static TestInstance generateRandom(int numAgents, int numJobs){
 
         // Generates the preferences randomly, but the processing times are fixed
         Preference[] preferences = new Preference[numAgents];
         for(int i = 0; i < numAgents; i++)
-            preferences[i] = new Preference();
+            preferences[i] = new Preference(numJobs);
 
         /*
         int[] temp0 = {7, 8, 2, 3, 4, 9, 6, 1, 0, 5};
@@ -54,7 +55,7 @@ public interface SolutionTester {
 
          */
 
-        return preferences;
+        return new TestInstance(numAgents, numJobs, preferences);
     }
 
 }

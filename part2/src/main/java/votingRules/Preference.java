@@ -1,5 +1,6 @@
 package votingRules;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,15 +9,9 @@ import java.util.List;
 /**
  * This interface is used to represent a single preference by an agent
  */
-public class Preference {
+public class Preference implements Serializable {
 
-    /**
-     * This array contains the processing time for each job.
-     * Index i represents job with ID i,
-     * so processingTimes[2] is the processing time
-     * of job with ID = 2.
-     */
-    public static int[] processingTimes;  //{44, 37, 49, 43, 51, 46, 53, 45, 52, 58};
+    private final int numJobs;
 
     /**
      * This hashmap represents the preference list of each agent.
@@ -36,21 +31,23 @@ public class Preference {
      * list of the agent. This is achieved
      * through the shuffle method.
      */
-    public Preference(){
+    public Preference(int numJobs){
+        this.numJobs = numJobs;
         List<Integer> solution = new ArrayList<>();
 
-        for(int i = 0; i < processingTimes.length; i++)
+        for(int i = 0; i < numJobs; i++)
             solution.add(i);
 
         Collections.shuffle(solution);
 
-        for(int i = 0; i < processingTimes.length; i++)
+        for(int i = 0; i < numJobs; i++)
             preferenceList.put(i, solution.get(i));
 
     }
 
     public Preference(int[] preferences){
-        for(int i = 0; i < processingTimes.length; i++)
+        this.numJobs = preferences.length;
+        for(int i = 0; i < numJobs; i++)
             preferenceList.put(preferences[i], i);
     }
 
@@ -73,21 +70,19 @@ public class Preference {
         //Create temporary array representing the position of each job
         //in this preference list. It takes the position from the hashmap
         //and uses it as its index for the currently examined job.
-        int[] temp = new int[processingTimes.length];
-        for(int jobID = 0; jobID < processingTimes.length; jobID++) {
+        int[] temp = new int[numJobs];
+        for(int jobID = 0; jobID < numJobs; jobID++) {
             int position = preferenceList.get(jobID);
             temp[position] = jobID;
         }
 
         StringBuilder output = new StringBuilder("[");
 
-        for(int position = 0; position < processingTimes.length; position++)
+        for(int position = 0; position < numJobs - 1; position++)
             output.append(temp[position])
-                    .append("(")
-                    .append(processingTimes[temp[position]])
-                    .append("), ");
+                    .append(", ");
 
-        output.append("]\n");
+        output.append(temp[numJobs-1]).append("]\n");
 
         return output.toString();
     }
