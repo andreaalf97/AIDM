@@ -52,8 +52,8 @@ public interface SolutionTester {
         preferences[8] = new Preference(temp8);
         int[] temp9 = {0, 4, 3, 2, 8, 6, 5, 1, 9, 7};
         preferences[9] = new Preference(temp9);
+        */
 
-         */
 
         return new TestInstance(numAgents, numJobs, preferences);
     }

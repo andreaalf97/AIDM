@@ -14,6 +14,10 @@ public class SumOfTardinessTester {
     private int[] completionTimes;
     private int[] completionTimesPreference;
 
+    public int[] getAgentTardiness(){
+        return this.agentTardiness;
+    }
+
     public SumOfTardinessTester(int n, int a){
         this.numJobs = n;
         this.numAgents = a;
