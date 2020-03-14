@@ -33,3 +33,5 @@ constraint forall(j in 2..numJobs)(completionTimes[schedule[j]] == completionTim
 % --- Objective ----
 var int: tardiness = sum(a in 1..numAgents, j in 1..numJobs)(max(0, completionTimes[preferences[a, j]]-agentCompletionTimes[a, j]));
 solve minimize tardiness;
+
+output[" schedule: ", show(schedule), "\n completionTimes: ", show(completionTimes), "\n tardiness: ", show(tardiness)];
