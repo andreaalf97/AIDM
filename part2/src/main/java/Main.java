@@ -1,7 +1,6 @@
 import benchmarkGenerator.TestInstance;
 import testers.SolutionTester;
 import votingRules.PTA_Copeland;
-import votingRules.Preference;
 
 /**
  * This is the Main class of the project, from which everything will be run

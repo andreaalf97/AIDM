@@ -78,11 +78,11 @@ public class Preference implements Serializable {
 
         StringBuilder output = new StringBuilder("[");
 
-        for(int position = 0; position < numJobs; position++)
+        for(int position = 0; position < numJobs - 1; position++)
             output.append(temp[position])
                     .append(", ");
 
-        output.append("]\n");
+        output.append(temp[numJobs-1]).append("]\n");
 
         return output.toString();
     }
