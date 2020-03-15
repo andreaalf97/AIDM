@@ -15,7 +15,7 @@ public class RandomTestGenerator implements TestGenerator {
         int positionCounter = 0;
 
         for(int numAgents = 30; numAgents <= 35; numAgents++){
-            for(int numJobs = 5; numJobs <= 25; numJobs += 5){
+            for(int numJobs = 5; numJobs <= 9; numJobs += 1){
 
                 instances[positionCounter] = SolutionTester.generateRandom(numAgents, numJobs);
 
