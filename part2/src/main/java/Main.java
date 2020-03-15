@@ -9,12 +9,13 @@ public class Main {
 
     public static void main(String[] args){
 
-        int numAgents = 10;
-        int numJobs = 10;
+        int numAgents = 500;
+        int numJobs = 100;
 
         TestInstance testInstance = SolutionTester.generateRandom(numAgents,  numJobs);
 
         System.out.println("PREFERENCES: " + testInstance.toString());
+
 
         System.out.println("SCORES:");
         new PTA_Copeland().schedule(testInstance);
