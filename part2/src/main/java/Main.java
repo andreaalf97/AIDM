@@ -14,9 +14,9 @@ public class Main {
 
         TestInstance testInstance = SolutionTester.generateRandom(numAgents,  numJobs);
 
-        System.out.println("PREFERENCES: " + testInstance.toString());
+        //System.out.println("PREFERENCES: " + testInstance.toString());
 
-        System.out.println("SCORES:");
+        //System.out.println("SCORES:");
         new PTA_Copeland().schedule(testInstance);
 
     }
