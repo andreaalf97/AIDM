@@ -7,6 +7,6 @@ import benchmarkGenerator.TestInstance;
  */
 public interface VotingRule {
 
-    int[] schedule(TestInstance testInstance);
+    int[] schedule(TestInstance testInstance, int[] minizincSolution);
 
 }

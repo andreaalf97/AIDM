@@ -71,13 +71,13 @@ public class GiniIndexTester {
 
         TestInstance instance = SolutionTester.generateRandom(numAgents, numJobs);
 
-        VotingRule rule = new PTA_Copeland();
-        int[] schedule = rule.schedule(instance);
-
-        SumOfTardinessTester tester = new SumOfTardinessTester(numJobs, numAgents);
-        tester.calculateSumOfTardiness(schedule, instance.preferences, instance.processingTimes);
-
-        int[] tardiness = tester.getAgentTardiness();
+//        VotingRule rule = new PTA_Copeland();
+//        int[] schedule = rule.schedule(instance);
+//
+//        SumOfTardinessTester tester = new SumOfTardinessTester(numJobs, numAgents);
+//        tester.calculateSumOfTardiness(schedule, instance.preferences, instance.processingTimes);
+//
+//        int[] tardiness = tester.getAgentTardiness();
 
 //        System.out.println(GiniIndexTester.getIndex(tardiness, numAgents));
     }
