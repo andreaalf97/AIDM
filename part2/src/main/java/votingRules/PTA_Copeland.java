@@ -64,9 +64,11 @@ public class PTA_Copeland implements VotingRule {
             }
         }
 
-        System.out.println(scores);
-        System.out.println("SORTED BY SCORE:");
+//        System.out.println(scores);
+//        System.out.println("SORTED BY SCORE:");
         ArrayList scheduleArrayList = scores.sorted();
+//        System.out.println(scheduleArrayList);
+        //Object[] schedule = scheduleArrayList.toArray();
         System.out.println(scheduleArrayList);
 
         double end = System.currentTimeMillis();
@@ -78,15 +80,15 @@ public class PTA_Copeland implements VotingRule {
             schedule[i] = (int)scheduleArrayList.get(i);
         }
 
-        boolean isThereWinner = condorsetTests.isThereCondorcetWinner();
-        System.out.println("isThereWinner: " + isThereWinner);
-        boolean isCondorcetWinner = condorsetTests.testCondorcetWinner(schedule);
-        System.out.println("isCondorcetWinner: " + isCondorcetWinner);
+//        boolean isThereWinner = condorsetTests.isThereCondorcetWinner();
+//        System.out.println("isThereWinner: " + isThereWinner);
+//        boolean isCondorcetWinner = condorsetTests.testCondorcetWinner(schedule);
+//        System.out.println("isCondorcetWinner: " + isCondorcetWinner);
 
-        System.out.println("--------------------------------------------------------------------");
-        System.out.println("PTA violations before: " + condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes));
-        System.out.println("Sum of Tardiness before: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
-        System.out.println("--------------------------------------------------------------------");
+//        System.out.println("--------------------------------------------------------------------");
+//        System.out.println("PTA violations before: " + condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes));
+//        System.out.println("Sum of Tardiness before: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
+//        System.out.println("--------------------------------------------------------------------");
         int[] agentTardiness = sumOfTardTests.getAgentTardiness();
         System.out.println("Agent Tardiness: " + Arrays.toString(agentTardiness));
         System.out.println(GiniIndexTester.getIndex(agentTardiness, numAgents));
@@ -116,9 +118,9 @@ public class PTA_Copeland implements VotingRule {
         System.out.println("--------------------------------------------------------------------");
         System.out.println("Sum of Tardiness after: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
 
-        System.out.println("Pareto Efficient schedule: " + paretoTests.isScheduleParetoEfficient(schedule));
+        //System.out.println("Pareto Efficient schedule: " + paretoTests.isScheduleParetoEfficient(schedule));
         agentTardiness = sumOfTardTests.getAgentTardiness();
-        System.out.println("Agent Tardiness: " + Arrays.toString(agentTardiness));
+        //System.out.println("Agent Tardiness: " + Arrays.toString(agentTardiness));
         //System.out.println("Pareto Efficient per agent: " + Arrays.toString(paretoTests.agentParetoEfficiency(agentTardiness)));
 
         System.out.println(GiniIndexTester.getIndex(agentTardiness, numAgents));

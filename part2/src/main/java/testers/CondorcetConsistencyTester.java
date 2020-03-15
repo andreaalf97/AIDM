@@ -84,11 +84,11 @@ public class CondorcetConsistencyTester {
                 }
             }
             if (lost == false) {
-                System.out.println("The actual Condorcet winner is " + i);
+//                System.out.println("The actual Condorcet winner is " + i);
                 return true;
             }
         }
-        System.out.println("No Condorcet winner exists");
+//        System.out.println("No Condorcet winner exists");
         return false;
     }
 

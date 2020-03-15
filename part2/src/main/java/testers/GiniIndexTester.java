@@ -79,6 +79,6 @@ public class GiniIndexTester {
 
         int[] tardiness = tester.getAgentTardiness();
 
-        System.out.println(GiniIndexTester.getIndex(tardiness, numAgents));
+//        System.out.println(GiniIndexTester.getIndex(tardiness, numAgents));
     }
 }
