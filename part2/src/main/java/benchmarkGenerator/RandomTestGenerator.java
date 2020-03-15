@@ -3,11 +3,10 @@ package benchmarkGenerator;
 import testers.SolutionTester;
 
 import java.io.*;
-import java.nio.file.Paths;
 
 public class RandomTestGenerator implements TestGenerator {
 
-    private String filePath = Paths.get("src/main/resources/tests/randomTest.instances").toAbsolutePath().toString();
+    private String filePath = "/home/andreaalf/Documents/AIDM/AIDM/part2/src/main/resources/tests/randomTest.instances";
 
     @Override
     public TestInstance[] generateBenchmark() {
