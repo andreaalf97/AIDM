@@ -102,7 +102,7 @@ public class PTA_Copeland implements VotingRule {
         System.out.println("Pareto Efficient schedule: " + paretoTests.isScheduleParetoEfficient(schedule));
         int[] agentTardiness = sumOfTardTests.getAgentTardiness();
         System.out.println("Agent Tardiness: " + Arrays.toString(agentTardiness));
-        System.out.println("Pareto Efficient per agent: " + Arrays.toString(paretoTests.agentParetoEfficiency(agentTardiness)));
+        //System.out.println("Pareto Efficient per agent: " + Arrays.toString(paretoTests.agentParetoEfficiency(agentTardiness)));
 
         return schedule;
 

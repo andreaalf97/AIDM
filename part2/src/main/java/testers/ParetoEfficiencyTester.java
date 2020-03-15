@@ -10,13 +10,13 @@ public class ParetoEfficiencyTester {
         this.numAgents = a;
     }
 
-    public boolean isScheduleParetoEfficient(Object[] schedule){
+    public boolean isScheduleParetoEfficient(int[] schedule){
         for (int i=0; i<numJobs; i++){
             for (int j=0; j<numJobs; j++) {
                 if (i != j && CondorcetConsistencyTester.votes[i][j] == numAgents) {
                     for (int c = 0; c < numJobs; c++) {
-                        if ((Integer) schedule[c] == i) break;
-                        if ((Integer) schedule[c] == j) return false;
+                        if (schedule[c] == i) break;
+                        if (schedule[c] == j) return false;
                     }
                 }
             }
