@@ -64,17 +64,23 @@ public class Preference implements Serializable {
         return position1 < position2;
     }
 
+    public int[] toArray(){
+        int[] temp = new int[numJobs];
+        for(int jobID = 0; jobID < numJobs; jobID++) {
+            int position = preferenceList.get(jobID);
+            temp[position] = jobID;
+        }
+
+        return temp;
+    }
+
     @Override
     public String toString() {
 
         //Create temporary array representing the position of each job
         //in this preference list. It takes the position from the hashmap
         //and uses it as its index for the currently examined job.
-        int[] temp = new int[numJobs];
-        for(int jobID = 0; jobID < numJobs; jobID++) {
-            int position = preferenceList.get(jobID);
-            temp[position] = jobID;
-        }
+        int[] temp = this.toArray();
 
         StringBuilder output = new StringBuilder("[");
 

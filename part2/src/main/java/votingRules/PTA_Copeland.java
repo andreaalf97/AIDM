@@ -62,10 +62,10 @@ public class PTA_Copeland implements VotingRule {
             }
         }
 
-        System.out.println(scores);
-        System.out.println("SORTED BY SCORE:");
+//        System.out.println(scores);
+//        System.out.println("SORTED BY SCORE:");
         ArrayList scheduleArrayList = scores.sorted();
-        System.out.println(scheduleArrayList);
+//        System.out.println(scheduleArrayList);
         //Object[] schedule = scheduleArrayList.toArray();
 
         int[] schedule = new int[numJobs];
@@ -73,35 +73,35 @@ public class PTA_Copeland implements VotingRule {
             schedule[i] = (int)scheduleArrayList.get(i);
         }
 
-        boolean isThereWinner = condorsetTests.isThereCondorcetWinner();
-        System.out.println("isThereWinner: " + isThereWinner);
-        boolean isCondorcetWinner = condorsetTests.testCondorcetWinner(schedule);
-        System.out.println("isCondorcetWinner: " + isCondorcetWinner);
+//        boolean isThereWinner = condorsetTests.isThereCondorcetWinner();
+//        System.out.println("isThereWinner: " + isThereWinner);
+//        boolean isCondorcetWinner = condorsetTests.testCondorcetWinner(schedule);
+//        System.out.println("isCondorcetWinner: " + isCondorcetWinner);
 
-        System.out.println("--------------------------------------------------------------------");
-        System.out.println("PTA violations before: " + condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes));
-        System.out.println("Sum of Tardiness before: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
-        System.out.println("--------------------------------------------------------------------");
+//        System.out.println("--------------------------------------------------------------------");
+//        System.out.println("PTA violations before: " + condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes));
+//        System.out.println("Sum of Tardiness before: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
+//        System.out.println("--------------------------------------------------------------------");
 
         int[] results = new int[2];
         results[0] = 0;
         results[1] = 0;
         while (results[0] == 0) {
-            for (int i=0; i<schedule.length; i++) System.out.print(schedule[i] + " ");
-            System.out.println();
+//            for (int i=0; i<schedule.length; i++) System.out.print(schedule[i] + " ");
+//            System.out.println();
             results = condorsetTests.testCondorcetConsistency(schedule, results[1]);
-            System.out.println("isCondorcetConsistent (1==YES):" + results[0]);
+//            System.out.println("isCondorcetConsistent (1==YES):" + results[0]);
         }
 
-        System.out.println("--------------------------------------------------------------------");
-        System.out.println("PTA violations after: " + condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes));
+//        System.out.println("--------------------------------------------------------------------");
+//        System.out.println("PTA violations after: " + condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes));
 
-        System.out.println("--------------------------------------------------------------------");
-        System.out.println("Sum of Tardiness after: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
+//        System.out.println("--------------------------------------------------------------------");
+//        System.out.println("Sum of Tardiness after: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
 
-        System.out.println("Pareto Efficient schedule: " + paretoTests.isScheduleParetoEfficient(schedule));
+//        System.out.println("Pareto Efficient schedule: " + paretoTests.isScheduleParetoEfficient(schedule));
         int[] agentTardiness = sumOfTardTests.getAgentTardiness();
-        System.out.println("Agent Tardiness: " + Arrays.toString(agentTardiness));
+//        System.out.println("Agent Tardiness: " + Arrays.toString(agentTardiness));
         //System.out.println("Pareto Efficient per agent: " + Arrays.toString(paretoTests.agentParetoEfficiency(agentTardiness)));
 
         return schedule;

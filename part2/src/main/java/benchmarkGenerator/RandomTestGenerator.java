@@ -3,11 +3,10 @@ package benchmarkGenerator;
 import testers.SolutionTester;
 
 import java.io.*;
-import java.nio.file.Paths;
 
 public class RandomTestGenerator implements TestGenerator {
 
-    private String filePath = Paths.get("src/main/resources/tests/randomTest.instances").toAbsolutePath().toString();
+    private String filePath = "/home/andreaalf/Documents/AIDM/AIDM/part2/src/main/resources/tests/randomTest.instances";
 
     @Override
     public TestInstance[] generateBenchmark() {
@@ -16,7 +15,7 @@ public class RandomTestGenerator implements TestGenerator {
         int positionCounter = 0;
 
         for(int numAgents = 30; numAgents <= 35; numAgents++){
-            for(int numJobs = 5; numJobs <= 25; numJobs += 5){
+            for(int numJobs = 5; numJobs <= 9; numJobs += 1){
 
                 instances[positionCounter] = SolutionTester.generateRandom(numAgents, numJobs);
 

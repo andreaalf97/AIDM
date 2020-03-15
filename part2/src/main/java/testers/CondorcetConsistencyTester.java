@@ -34,8 +34,8 @@ public class CondorcetConsistencyTester {
                     // If the job on the right is preferred by the majority, then the schedule is not consistent
                     // As such, perform a local swap between the left and right jobs
                     if (votes[job_right][job_left] > numAgents/2) {
-                        System.out.println(job_left + " > " + job_right + " but the score of job " + job_right + " is " +
-                                votes[job_right][job_left] + " , which is greater than half the agents");
+//                        System.out.println(job_left + " > " + job_right + " but the score of job " + job_right + " is " +
+//                                votes[job_right][job_left] + " , which is greater than half the agents");
                         int temp = (Integer) schedule[i];
                         schedule[i] = schedule[i+1];
                         schedule[i+1] = temp;
@@ -61,8 +61,8 @@ public class CondorcetConsistencyTester {
         for(int i = 1; i < numJobs; i++) {
             int job_right = (Integer) schedule[i];
             if (votes[job_right][winner] > numAgents/2) {
-                System.out.println(winner + " > " + job_right + " but the score of job " + job_right + " is " +
-                        votes[job_right][winner] + " , which is greater than half the agents");
+//                System.out.println(winner + " > " + job_right + " but the score of job " + job_right + " is " +
+//                        votes[job_right][winner] + " , which is greater than half the agents");
                 return false;
             }
         }
@@ -84,11 +84,11 @@ public class CondorcetConsistencyTester {
                 }
             }
             if (lost == false) {
-                System.out.println("The actual Condorcet winner is " + i);
+//                System.out.println("The actual Condorcet winner is " + i);
                 return true;
             }
         }
-        System.out.println("No Condorcet winner exists");
+//        System.out.println("No Condorcet winner exists");
         return false;
     }
 
@@ -107,8 +107,8 @@ public class CondorcetConsistencyTester {
                 float threshold = (float)(p_j * numAgents) / (float)(p_j + p_i);
                 //float threshold2 = (float)(p_i * numAgents) / (float)(p_i + p_j);
                 if (votes[job_right][job_left] > threshold) {
-                    System.out.println(job_left + " > " + job_right + " but the score of job " + job_right + " is " +
-                            votes[job_right][job_left] + " , which is greater than the threshold " + threshold);
+//                    System.out.println(job_left + " > " + job_right + " but the score of job " + job_right + " is " +
+//                            votes[job_right][job_left] + " , which is greater than the threshold " + threshold);
                     //System.out.println(job_left + " > " + job_right + " and the score of job " + job_left + " is " +
                     //        votes[job_left][job_right] + " , which is less than the threshold " + threshold2);
                     count++;
