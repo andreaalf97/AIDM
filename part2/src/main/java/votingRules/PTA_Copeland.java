@@ -7,7 +7,6 @@ import testers.ParetoEfficiencyTester;
 import testers.SumOfTardinessTester;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class PTA_Copeland implements VotingRule {
 
@@ -103,28 +102,47 @@ public class PTA_Copeland implements VotingRule {
 //                System.out.println(Arrays.toString(schedule));
         }
 
-        double end = System.currentTimeMillis();
-        double ourRuntime = end - start;
+        long end = System.currentTimeMillis();
+        long ourRuntime = end - start;
         //System.out.println("part2: " + part2);
         System.out.println("OUR TOTAL RUNTIME: " + ourRuntime);
 
-        System.out.println("--------------------------------------------------------------------");
-        System.out.println("PTA violations for our solution: " + condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes));
-        System.out.println("PTA violations for MINIZINC: " + condorsetTests.countPTACondorcetViolations(minizincSolution, testInstance.processingTimes));
+        Statistics.myRuntime.add(ourRuntime);
 
-        System.out.println("--------------------------------------------------------------------");
+        Statistics.numAgents.add(testInstance.numAgents);
+        Statistics.numJobs.add(testInstance.numJobs);
 
-        System.out.println("Sum of Tardiness for our solution: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
+        double myPercPTA = ((double)condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes)) / (numJobs*numJobs);
+        double mznPercPTA = ((double)condorsetTests.countPTACondorcetViolations(minizincSolution, testInstance.processingTimes) / (numJobs*numJobs));
+        System.out.println("PTA violations for our solution: " + myPercPTA);
+        System.out.println("PTA violations for MINIZINC: " + mznPercPTA);
+
+        Statistics.myPTAviolations.add(myPercPTA);
+        Statistics.mznPTAviolations.add(mznPercPTA);
+
+
+        int mySum = sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes);
+        System.out.println("Sum of Tardiness for our solution: " + mySum);
         int[] agentTardiness = sumOfTardTests.getAgentTardiness();
-        System.out.println("Sum of Tardiness for MINIZINC: " + sumOfTardTests.calculateSumOfTardiness(minizincSolution, testInstance.preferences, testInstance.processingTimes));
+
+        int mznSum = sumOfTardTests.calculateSumOfTardiness(minizincSolution, testInstance.preferences, testInstance.processingTimes);
+        System.out.println("Sum of Tardiness for MINIZINC: " + mznSum);
         int[] agentTardinessMinizinc = sumOfTardTests.getAgentTardiness();
+
+        Statistics.mySumOfTardiness.add(mySum);
+        Statistics.mznSumOfTardiness.add(mznSum);
 
         //System.out.println("Pareto Efficient schedule: " + paretoTests.isScheduleParetoEfficient(schedule));
         //System.out.println("Agent Tardiness: " + Arrays.toString(agentTardiness));
         //System.out.println("Pareto Efficient per agent: " + Arrays.toString(paretoTests.agentParetoEfficiency(agentTardiness)));
 
-        System.out.println("Gini Index for our solution: " + GiniIndexTester.getIndex(agentTardiness, numAgents));
-        System.out.println("Gini Index for MINIZINC: " + GiniIndexTester.getIndex(agentTardinessMinizinc, numAgents));
+        double myIndex = GiniIndexTester.getIndex(agentTardiness, numAgents);
+        double mznIndex = GiniIndexTester.getIndex(agentTardinessMinizinc, numAgents);
+        System.out.println("Gini Index for our solution: " + myIndex);
+        System.out.println("Gini Index for MINIZINC: " + mznIndex);
+
+        Statistics.myGiniIndex.add(myIndex);
+        Statistics.mznGiniIndex.add(mznIndex);
 
         return schedule;
 
