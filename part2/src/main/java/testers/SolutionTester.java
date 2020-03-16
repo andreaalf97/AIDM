@@ -26,7 +26,6 @@ public interface SolutionTester {
      */
     static TestInstance generateRandom(int numAgents, int numJobs){
 
-        // Generates the preferences randomly, but the processing times are fixed
         Preference[] preferences = new Preference[numAgents];
         for(int i = 0; i < numAgents; i++)
             preferences[i] = new Preference(numJobs);
