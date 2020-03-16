@@ -2,6 +2,7 @@ import benchmarkGenerator.BenchmarkReader;
 import benchmarkGenerator.TestInstance;
 import testers.SolutionTester;
 import votingRules.PTA_Copeland;
+import votingRules.Statistics;
 
 import java.io.*;
 
@@ -13,7 +14,8 @@ public class Main {
     public static void main(String[] args){
 
 
-        TestInstance[] instances = BenchmarkReader.readTests("/home/andreaalf/Documents/AIDM/AIDM/part2/src/main/resources/tests/randomTest.instances");
+        TestInstance[] instances = BenchmarkReader.readTests("/home/andreaalf/Documents/AIDM/AIDM/part2/src/main/resources/tests/processingTimes.instances");
+
 
         // Create the file if it doesn't exist yet and put the minizinc data in
         for(TestInstance test : instances) {
@@ -39,12 +41,8 @@ public class Main {
                 long start = System.currentTimeMillis();
                 Process process = runtime.exec(commands);
 
-                StringBuilder output = new StringBuilder();
-
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(process.getInputStream()));
-
-
 
                 int exitVal = process.waitFor();
 
@@ -59,6 +57,7 @@ public class Main {
                 }
 
                 System.out.println("EXECUTION TIME MINIZINC: " + (end - start) + " ms");
+                Statistics.mznRuntime.add(end-start);
 
                 new PTA_Copeland().schedule(test, solutionSchedule);
 
@@ -72,6 +71,8 @@ public class Main {
                 e.printStackTrace();
             }
         }
+
+        Statistics.toFile("/home/andreaalf/Documents/Other/statisticsProcessing.txt");
 
         //System.out.println("PREFERENCES: " + testInstance.toString());
 
