@@ -57,9 +57,9 @@ public class CondorcetConsistencyTester {
      * @param schedule The array-ranking
      */
     public boolean testCondorcetWinner(int[] schedule){
-        int winner = (Integer) schedule[0];
+        int winner = schedule[0];
         for(int i = 1; i < numJobs; i++) {
-            int job_right = (Integer) schedule[i];
+            int job_right = schedule[i];
             if (votes[job_right][winner] > numAgents/2) {
                 //System.out.println(winner + " > " + job_right + " but the score of job " + job_right + " is " +
                 //        votes[job_right][winner] + " , which is greater than half the agents");
@@ -95,15 +95,19 @@ public class CondorcetConsistencyTester {
     /** The following function counts the number of PTA-Condorcet violations
      * in the schedule, as PTA-Condorcet consistency is defined in the paper
      * @param schedule The array-ranking
+     * @param processingTimes The processing time of each job
      */
     public int countPTACondorcetViolations(int[] schedule, int[] processingTimes){
         int count = 0;
+        //for each pair of jobs in the schedule
         for(int i = 0; i < numJobs - 1; i++) {
             for(int j = i+1; j < numJobs; j++) {
-                int job_left = (Integer) schedule[i];
-                int job_right = (Integer) schedule[j];
+                int job_left = schedule[i];
+                int job_right = schedule[j];
                 int p_i = processingTimes[job_left];
                 int p_j = processingTimes[job_right];
+                //If the job on the right ("loser") actually got more votes than the threshold it should surpass,
+                //then this is a violation of the PTA-Condorcet rule
                 float threshold = (float)(p_j * numAgents) / (float)(p_j + p_i);
                 //float threshold2 = (float)(p_i * numAgents) / (float)(p_i + p_j);
                 if (votes[job_right][job_left] > threshold) {

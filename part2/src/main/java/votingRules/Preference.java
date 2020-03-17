@@ -45,6 +45,11 @@ public class Preference implements Serializable {
 
     }
 
+    /**
+     * This constructor places each
+     * job from a preference array into
+     * the hash map (preference list).
+     */
     public Preference(int[] preferences){
         this.numJobs = preferences.length;
         for(int i = 0; i < numJobs; i++)
@@ -53,7 +58,7 @@ public class Preference implements Serializable {
 
 
     /**
-     * This function tells if job with ID1 comes before job with ID2 in this preference
+     * This function tells if job with ID1 comes before job with ID2 in this preference list
      * @param id1 The ID of the first job
      * @param id2 The ID of the second job
      * @return T/F
@@ -64,6 +69,10 @@ public class Preference implements Serializable {
         return position1 < position2;
     }
 
+    /**
+     * This function tells if job with ID1 comes before job with ID2 in this preference list
+     * Transform the hash map (preference list) into an array
+     */
     public int[] toArray(){
         int[] temp = new int[numJobs];
         for(int jobID = 0; jobID < numJobs; jobID++) {

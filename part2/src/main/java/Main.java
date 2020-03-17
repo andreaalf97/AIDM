@@ -13,7 +13,7 @@ public class Main {
 
     public static void main(String[] args){
 
-
+        /*
         TestInstance[] instances = BenchmarkReader.readTests("/home/andreaalf/Documents/AIDM/AIDM/part2/src/main/resources/tests/processingTimes.instances");
 
 
@@ -77,6 +77,21 @@ public class Main {
         //System.out.println("PREFERENCES: " + testInstance.toString());
 
         //System.out.println("SCORES:");
+
+         */
+
+        if (args.length < 2){
+            System.out.println("Give number of agents as first argument, and number of jobs as second argument");
+            return;
+        }
+        int numAgents = Integer.parseInt(args[0]);
+        int numJobs = Integer.parseInt(args[1]);
+
+        TestInstance testInstance = SolutionTester.generateRandom(numAgents,  numJobs);
+
+        System.out.println("PREFERENCES: " + testInstance.toString());
+
+        new PTA_Copeland().schedule(testInstance, null);
 
     }
 
