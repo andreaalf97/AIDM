@@ -11,12 +11,21 @@ import java.util.Arrays;
 
 public class PTA_Copeland implements VotingRule {
 
+    /**
+     * This method does everything: Given a test instance with all the necessary info,
+     * it applies our modified PTA-Condorcet algorithm, produces a schedule, and calculates
+     * all the properties and statistics about this schedule (and prints them).
+     * @param testInstance An object containing every piece of info about the problem we need
+     * @param minizincSolution The schedule the Minizinc model decides, was used during testing
+     */
     @Override
-    public int[] schedule(TestInstance testInstance) {
-        double start = System.currentTimeMillis();
+    public int[] schedule(TestInstance testInstance, int[] minizincSolution) {
+
+        long start = System.currentTimeMillis();
 
         int numAgents = testInstance.numAgents;
         int numJobs = testInstance.numJobs;
+        //Initialize some testers for later
         CondorcetConsistencyTester condorsetTests = new CondorcetConsistencyTester(numJobs, numAgents);
         SumOfTardinessTester sumOfTardTests = new SumOfTardinessTester(numJobs, numAgents);
         ParetoEfficiencyTester paretoTests = new ParetoEfficiencyTester(numJobs, numAgents);
@@ -24,6 +33,7 @@ public class PTA_Copeland implements VotingRule {
         // Initialize the scores with all 0
         Scores scores = new Scores(numJobs);
 
+        //PART 1
         // This double loop compares each job with all the others
         for(int i = 0; i < numJobs - 1; i++) {
             for (int j = i + 1; j < numJobs; j++) {
@@ -35,8 +45,8 @@ public class PTA_Copeland implements VotingRule {
                 // If job with ID=i comes before the job with ID=j
                 for (Preference preference : testInstance.preferences)
                     if (preference.isBefore(i, j))
-                        counter_i++;  // Increment the counter
-                    else counter_j++;
+                        counter_i++;  // Increment the number of agents preferring i over j
+                    else counter_j++; // Increment the number of agents preferring j over i
 
 
                 int p_i = testInstance.processingTimes[i];
@@ -64,15 +74,10 @@ public class PTA_Copeland implements VotingRule {
             }
         }
 
-//        System.out.println(scores);
-//        System.out.println("SORTED BY SCORE:");
+        //Sort the jobs in descending order, based on the score they obtained
         ArrayList scheduleArrayList = scores.sorted();
-//        System.out.println(scheduleArrayList);
 
-        double end = System.currentTimeMillis();
-        double part1 = end - start;
-        //System.out.println("part1: " + part1);
-
+        //Transform the sorted list of jobs into an array
         int[] schedule = new int[numJobs];
         for(int i = 0; i < numJobs; i++){
             schedule[i] = (int)scheduleArrayList.get(i);
@@ -82,46 +87,81 @@ public class PTA_Copeland implements VotingRule {
 //        System.out.println("isThereWinner: " + isThereWinner);
 //        boolean isCondorcetWinner = condorsetTests.testCondorcetWinner(schedule);
 //        System.out.println("isCondorcetWinner: " + isCondorcetWinner);
-
 //        System.out.println("--------------------------------------------------------------------");
 //        System.out.println("PTA violations before: " + condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes));
 //        System.out.println("Sum of Tardiness before: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
 //        System.out.println("--------------------------------------------------------------------");
-        //int[] agentTardiness = sumOfTardTests.getAgentTardiness();
-        //System.out.println("Agent Tardiness: " + Arrays.toString(agentTardiness));
-        //System.out.println(GiniIndexTester.getIndex(agentTardiness, numAgents));
+//        int[] agentTardiness = sumOfTardTests.getAgentTardiness();
+//        System.out.println("Tardiness per agent (before): " + Arrays.toString(agentTardiness));
+//       System.out.println("Gini Index (before): " + GiniIndexTester.getIndex(agentTardiness, numAgents));
 
+
+        //PART 2 - Make our schedule Condorcet-consistent
+        //First cell of the "results" array represents consistency,
+        //second cell represents index to start the next search from (optimization purposes)
         int[] results = new int[2];
-        results[0] = 0;
-        results[1] = 0;
-
-        double start2 = System.currentTimeMillis();
-
+        //While our schedule is not Condorcet-consistent
         while (results[0] == 0) {
-            //for (int i=0; i<schedule.length; i++) System.out.print(schedule[i] + " ");
-            //System.out.println();
+            //Search for swaps that will render the schedule Condorcet-consistent
             results = condorsetTests.testCondorcetConsistency(schedule, results[1]);
+            //If schedule has become Condorcet-consistent
             if (results[0] == 1)
-                System.out.println(Arrays.toString(schedule));
+                System.out.println("Schedule: " + Arrays.toString(schedule));
         }
 
-        double end2 = System.currentTimeMillis();
-        double part2 = end2 - start2;
-        //System.out.println("part2: " + part2);
-        System.out.println("total: " + (part1 + part2));
+        //Runtime
+        long end = System.currentTimeMillis();
+        long ourRuntime = end - start;
+        System.out.println("OUR TOTAL RUNTIME: " + ourRuntime + " ms");
 
-        System.out.println("--------------------------------------------------------------------");
-        System.out.println("PTA violations after: " + condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes));
+        Statistics.myRuntime.add(ourRuntime);
+        Statistics.numAgents.add(testInstance.numAgents);
+        Statistics.numJobs.add(testInstance.numJobs);
 
-        System.out.println("--------------------------------------------------------------------");
-        System.out.println("Sum of Tardiness after: " + sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes));
+        //PTA-Violations
+        double myPercPTA = ((double)condorsetTests.countPTACondorcetViolations(schedule, testInstance.processingTimes)) / (numJobs * numJobs /2);
+        System.out.println("PTA violations % for our solution: " + myPercPTA);
+        Statistics.myPTAviolations.add(myPercPTA);
+        if (minizincSolution != null) {
+            double mznPercPTA = ((double) condorsetTests.countPTACondorcetViolations(minizincSolution, testInstance.processingTimes) / (numJobs * numJobs /2));
+            System.out.println("PTA violations % for MINIZINC: " + mznPercPTA);
+            Statistics.mznPTAviolations.add(mznPercPTA);
+        }
 
-        //System.out.println("Pareto Efficient schedule: " + paretoTests.isScheduleParetoEfficient(schedule));
+        //Sum-of-tardiness and tardiness per agent
+        int mySum = sumOfTardTests.calculateSumOfTardiness(schedule, testInstance.preferences, testInstance.processingTimes);
+        System.out.println("Sum of Tardiness for our solution: " + mySum);
         int[] agentTardiness = sumOfTardTests.getAgentTardiness();
-        //System.out.println("Agent Tardiness: " + Arrays.toString(agentTardiness));
-        //System.out.println("Pareto Efficient per agent: " + Arrays.toString(paretoTests.agentParetoEfficiency(agentTardiness)));
 
-        System.out.println(GiniIndexTester.getIndex(agentTardiness, numAgents));
+        int mznSum = 0;
+        int[] agentTardinessMinizinc = null;
+        if (minizincSolution != null) {
+            mznSum = sumOfTardTests.calculateSumOfTardiness(minizincSolution, testInstance.preferences, testInstance.processingTimes);
+            System.out.println("Sum of Tardiness for MINIZINC: " + mznSum);
+            agentTardinessMinizinc = sumOfTardTests.getAgentTardiness();
+        }
+
+        Statistics.mySumOfTardiness.add(mySum);
+        if (minizincSolution != null) {
+            Statistics.mznSumOfTardiness.add(mznSum);
+        }
+
+        System.out.println("Tardiness per agent: " + Arrays.toString(agentTardiness));
+
+        //Pareto efficiency
+        System.out.println("Pareto Efficient schedule: " + paretoTests.isScheduleParetoEfficient(schedule));
+        //System.out.println("Pareto Efficiency per agent: " + Arrays.toString(paretoTests.agentParetoEfficiency(agentTardiness)));
+
+        //Gini index
+        double myIndex = GiniIndexTester.getIndex(agentTardiness, numAgents);
+        System.out.println("Gini Index for our solution: " + myIndex);
+        Statistics.myGiniIndex.add(myIndex);
+
+        if (minizincSolution != null) {
+            double mznIndex = GiniIndexTester.getIndex(agentTardinessMinizinc, numAgents);
+            System.out.println("Gini Index for MINIZINC: " + mznIndex);
+            Statistics.mznGiniIndex.add(mznIndex);
+        }
 
         return schedule;
 

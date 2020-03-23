@@ -139,7 +139,7 @@ public class BenchmarkReader {
 
     }
 
-    private static int[] toSchedule(String scheduleString) {
+    public static int[] toSchedule(String scheduleString) {
 
 
         scheduleString = scheduleString.replaceAll("[ ]", "");
@@ -149,7 +149,7 @@ public class BenchmarkReader {
 
         for(String split : splits){
 
-            list.add(Integer.parseInt(split));
+            list.add((Integer.parseInt(split)) - 1);
 
         }
 
