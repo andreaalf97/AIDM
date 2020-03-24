@@ -3,3 +3,5 @@ part1/data/
 .idea/
 *.iml
 part2/src/target
+part2/out
+part3/IDM/out/
