@@ -12,7 +12,7 @@ public class UserGenerator {
 		
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new FileReader("synthetic_ad.txt"));
+			reader = new BufferedReader(new FileReader("/home/andreaalf/Documents/AIDM/AIDM/part3/IDM/synthetic_ad.txt"));
 
 			int initialState = 0;
 			int numStates = Integer.valueOf(reader.readLine());
@@ -96,7 +96,7 @@ public class UserGenerator {
 		
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new FileReader("synthetic_ad.txt"));
+			reader = new BufferedReader(new FileReader("/home/andreaalf/Documents/AIDM/AIDM/part3/IDM/synthetic_ad.txt"));
 
 			int initialState = 0;
 			int numStates = Integer.valueOf(reader.readLine());
