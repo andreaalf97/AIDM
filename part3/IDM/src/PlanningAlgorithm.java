@@ -179,7 +179,7 @@ public class PlanningAlgorithm {
 		double[] V = new double[cmdp.getNumStates()];
 		int nStates = cmdp.getNumStates();
 		int nActions = cmdp.getNumActions();
-		double e = 0.00000005;
+		double e = 0.00005;
 		
 		// TODO compute an optimal value function for the cmdp object
 		// Check out slide #25 of the first lecture for this algorithm
@@ -204,7 +204,7 @@ public class PlanningAlgorithm {
 					}
 					
 					double oldQ = Q[s][a];
-					Q[s][a] = cmdp.getReward(s, a) + cmdp.getDiscountFactor() * sum;
+					Q[s][a] = cmdp.getReward(s, a) + discountFactor * sum;
 					d = Double.max(d, Math.abs(Q[s][a] - oldQ));
 					
 				}

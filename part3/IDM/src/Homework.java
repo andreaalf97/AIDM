@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -69,17 +71,46 @@ public class Homework {
 	public static void task2() {		
 		// Get CMDP model for 1 agent
 		CMDP cmdp = UserGenerator.getCMDPChild();
-		CMDP[] cmdps = new CMDP[]{cmdp};
-		
+
 		// Assign cost
-		cmdp.assignCost(0, 0, 0); // TODO add costs to the state action pairs
-		
-		// Solve the problem without constraints
-		PlanningAlgorithm alg = new PlanningAlgorithm();
-		Solution solution = alg.solveUnconstrained(cmdps);
-		System.out.println("Expected reward: "+solution.getExpectedReward());
-		System.out.println("Expected cost: "+solution.getExpectedCost());
-		
+		for(int s = 0; s < cmdp.getNumStates(); s++)
+			for(int a = 0; a < cmdp.getNumActions(); a++)
+				cmdp.assignCost(s, a, 2 * a);
+
+		CMDP[] cmdps = new CMDP[]{cmdp};
+
+//		cmdp.assignCost(0, 0, 0);
+
+		int testSamples = 50;
+		double[] budgetLimit = new double[testSamples];
+		double[] expectedReward = new double[testSamples];
+
+		Solution solution = null;
+		for(double budget = 1.0; budget < testSamples + 1; budget++) {
+			// Solve the problem without constraints
+			PlanningAlgorithm alg = new PlanningAlgorithm();
+			solution = alg.solve(cmdps, budget);
+			System.out.println("Expected reward: " + solution.getExpectedReward());
+//			System.out.println("Expected cost: " + solution.getExpectedCost());
+
+			expectedReward[(int)budget - 1] = solution.getExpectedReward();
+			budgetLimit[(int) budget - 1] = budget;
+		}
+
+		try {
+			FileWriter writer = new FileWriter("/home/andreaalf/Documents/AIDM/AIDM/part3/dataAnalysis/task2data.csv");
+			writer.write("budgetLimit,expectedReward\n");
+
+			for(int i = 0; i < testSamples; i++){
+				writer.write(budgetLimit[i] + "," + expectedReward[i] + "\n");
+			}
+
+			writer.close();
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+
 		// Simulate solution
 		System.out.println();
 		Simulator sim = new Simulator(rnd);
@@ -104,10 +135,12 @@ public class Homework {
 		// Get CMDP model for 1 agent
 		CMDP cmdp = UserGenerator.getCMDPChild();
 		CMDP[] cmdps = new CMDP[]{cmdp};
-		
+
 		// Assign cost
-		cmdp.assignCost(0, 0, 0); // TODO add costs to the state action pairs
-		
+		for(int s = 0; s < cmdp.getNumStates(); s++)
+			for(int a = 0; a < cmdp.getNumActions(); a++)
+				cmdp.assignCost(s, a, 2 * a);
+
 		PlanningAlgorithm alg = new PlanningAlgorithm();
 		Solution solution = alg.solve(cmdps, 20.0);
 		double expectedReward = solution.getExpectedReward();
@@ -121,13 +154,17 @@ public class Homework {
 		// Get CMDP models
 		CMDP cmdpChild = UserGenerator.getCMDPChild();
 		CMDP cmdpAdult = UserGenerator.getCMDPAdult();
-		
-		// Assign cost to child
-		cmdpChild.assignCost(0, 0, 0); // TODO add costs to the state action pairs
-		
-		// Assign cost to adult
-		cmdpAdult.assignCost(0, 0, 0); // TODO add costs to the state action pairs
-		
+
+		// Assign cost child
+		for(int s = 0; s < cmdpChild.getNumStates(); s++)
+			for(int a = 0; a < cmdpChild.getNumActions(); a++)
+				cmdpChild.assignCost(s, a, 2 * a);
+
+		// Assign cost adult
+		for(int s = 0; s < cmdpAdult.getNumStates(); s++)
+			for(int a = 0; a < cmdpAdult.getNumActions(); a++)
+				cmdpAdult.assignCost(s, a, 2 * a);
+
 		PlanningAlgorithm alg = new PlanningAlgorithm();
 		Simulator sim = new Simulator(rnd);
 		
@@ -177,6 +214,6 @@ public class Homework {
 	}
 	
 	public static void main(String[] args) {
-			task1();
+		  task2();
 	}
 }
