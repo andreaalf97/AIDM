@@ -173,7 +173,7 @@ public class PlanningAlgorithm {
 		return new Solution(policies, expectedReward, expectedCost, expectedRewardAgent, expectedCostAgent);
 	}
 	
-	public Solution solveVI(CMDP[] cmdps, double discountFactor) {
+	public Solution solveVI(CMDP[] cmdps) {
 		CMDP cmdp = cmdps[0];
 		
 		double[] V = new double[cmdp.getNumStates()];
@@ -211,7 +211,8 @@ public class PlanningAlgorithm {
 			}
 			
 		} while (d >= e);
-		
+
+
 		//Print Q
 		System.out.println("Q - VALUE FUNCTION");
 		System.out.println("--------------------------------");
@@ -224,6 +225,8 @@ public class PlanningAlgorithm {
 			System.out.println();
 		}
 		System.out.println();
+
+
 		
 		
 		double[][] policy = new double[cmdp.getNumStates()][cmdp.getNumActions()];
@@ -239,6 +242,7 @@ public class PlanningAlgorithm {
 				 }
 			 }
 			 policy[s][chosen_action] = 1;
+			 V[s] = maxUtil;
 		}
 		
 		ArrayList<double[][]> policies = new ArrayList<double[][]>();

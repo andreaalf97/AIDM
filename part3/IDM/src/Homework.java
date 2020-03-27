@@ -32,14 +32,14 @@ public class Homework {
 	}
 	
 	// Solve unconstrained problem for 1 agent with value iteration
-	public static void task1() {		
+	public static void task1() {
 		// Get CMDP model for 1 agent
 		CMDP cmdp = UserGenerator.getCMDPChild();
 		CMDP[] cmdps = new CMDP[]{cmdp};
 		
 		// Solve the problem without constraints
 		PlanningAlgorithm alg = new PlanningAlgorithm();		
-		Solution solution = alg.solveVI(cmdps, 0.95);
+		Solution solution = alg.solveVI(cmdps);
 		System.out.println("Expected reward: "+solution.getExpectedReward());
 		System.out.println("Expected cost: "+solution.getExpectedCost());
 		
@@ -51,6 +51,7 @@ public class Homework {
 		// Print policy of agent 0
 		int agentID = 0;
 		double[][] policy = solution.getPolicy(agentID);
+
 		System.out.println("\nPOLICY");
 		System.out.println("--------------------------------");
 		for(int s=0; s<cmdps[agentID].getNumStates(); s++) {
@@ -61,6 +62,8 @@ public class Homework {
 			}
 			System.out.println();
 		}
+
+
 		
 	}
 	
@@ -211,6 +214,6 @@ public class Homework {
 	}
 	
 	public static void main(String[] args) {
-		task2();
+		  task2();
 	}
 }
