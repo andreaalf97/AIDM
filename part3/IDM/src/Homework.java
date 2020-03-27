@@ -66,9 +66,46 @@ public class Homework {
 
 		
 	}
+
+	// Solve unconstrained problem for 1 agent with cost
+	public static void task2() {
+		// Get CMDP model for 1 agent
+		CMDP cmdp = UserGenerator.getCMDPChild();
+
+		// Assign cost
+		for(int s = 0; s < cmdp.getNumStates(); s++)
+			for(int a = 0; a < cmdp.getNumActions(); a++)
+				cmdp.assignCost(s, a, 2 * a);
+
+		CMDP[] cmdps = new CMDP[]{cmdp};
+
+		// Solve the problem without constraints
+		PlanningAlgorithm alg = new PlanningAlgorithm();
+		Solution solution = alg.solveUnconstrained(cmdps);
+		System.out.println("Expected reward: "+solution.getExpectedReward());
+		System.out.println("Expected cost: "+solution.getExpectedCost());
+
+		// Simulate solution
+		System.out.println();
+		Simulator sim = new Simulator(rnd);
+		sim.simulate(cmdps, solution, 1000);
+
+		// Print policy of agent 0
+		int agentID = 0;
+		double[][] policy = solution.getPolicy(agentID);
+		System.out.println();
+		for(int s=0; s<cmdps[agentID].getNumStates(); s++) {
+			System.out.print("State "+s+": ");
+			for(int a=0; a<cmdps[agentID].getNumActions(); a++) {
+				System.out.print(policy[s][a]+" ");
+			}
+			System.out.println();
+		}
+
+	}
 	
 	// Solve unconstrained problem for 1 agent with cost
-	public static void task2() {		
+	public static void task3() {
 		// Get CMDP model for 1 agent
 		CMDP cmdp = UserGenerator.getCMDPChild();
 
@@ -128,25 +165,6 @@ public class Homework {
 			System.out.println();
 		}
 		
-	}
-	
-	// Solve constrained problem for 1 agent
-	public static void task3() {		
-		// Get CMDP model for 1 agent
-		CMDP cmdp = UserGenerator.getCMDPChild();
-		CMDP[] cmdps = new CMDP[]{cmdp};
-
-		// Assign cost
-		for(int s = 0; s < cmdp.getNumStates(); s++)
-			for(int a = 0; a < cmdp.getNumActions(); a++)
-				cmdp.assignCost(s, a, 2 * a);
-
-		PlanningAlgorithm alg = new PlanningAlgorithm();
-		Solution solution = alg.solve(cmdps, 20.0);
-		double expectedReward = solution.getExpectedReward();
-		System.out.println("Expected reward budget 20: "+expectedReward);
-		
-		// TODO print expected reward as function of cost limit L
 	}
 	
 	// Solve constrained problem for 2 agents with trivial budget split

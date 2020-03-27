@@ -204,7 +204,7 @@ public class PlanningAlgorithm {
 					}
 					
 					double oldQ = Q[s][a];
-					Q[s][a] = cmdp.getReward(s, a) + discountFactor * sum;
+					Q[s][a] = cmdp.getReward(s, a) + cmdp.getDiscountFactor() * sum;
 					d = Double.max(d, Math.abs(Q[s][a] - oldQ));
 					
 				}
