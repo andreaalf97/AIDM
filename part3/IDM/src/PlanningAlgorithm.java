@@ -164,7 +164,7 @@ public class PlanningAlgorithm {
 					policy[i][s][a] = solutionValues[varID] / divisor;
 				}
 			}
-			
+
 		}
 
 

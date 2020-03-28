@@ -2,6 +2,8 @@
 
 public class CMDP extends MDP {	
 	private double[][] costFunction;
+
+	public double budget = 0;
 	
 	public CMDP(int nStates, int nActions, int initialState, double discountFactor, double[][] costFunction) {
 		super(nStates, nActions, initialState, discountFactor);
