@@ -152,18 +152,22 @@ public class PlanningAlgorithm {
 			policy[i] = new double[cmdp.getNumStates()][cmdp.getNumActions()];
 			
 			for(int s=0; s<cmdp.getNumStates(); s++) {
+
+				double divisor = 0.0;
+				for(int aPrime=0; aPrime<cmdp.getNumActions(); aPrime++) {
+					int varID = varIDs[i][s][aPrime];
+					divisor += solutionValues[varID];
+				}
+
 				for(int a=0; a<cmdp.getNumActions(); a++) {
-					double divisor = 0.0;
-					for(int aPrime=0; aPrime<cmdp.getNumActions(); aPrime++) {
-						int varID = varIDs[i][s][aPrime];
-						divisor += solutionValues[varID];
-					}
-					
 					int varID = varIDs[i][s][a];
 					policy[i][s][a] = solutionValues[varID] / divisor;
 				}
 			}
+			
 		}
+
+
 		
 		ArrayList<double[][]> policies = new ArrayList<double[][]>();
 		for(int i=0; i<nAgents; i++) {
