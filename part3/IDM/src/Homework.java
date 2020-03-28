@@ -66,9 +66,46 @@ public class Homework {
 
 		
 	}
+
+	// Solve unconstrained problem for 1 agent with cost
+	public static void task2() {
+		// Get CMDP model for 1 agent
+		CMDP cmdp = UserGenerator.getCMDPChild();
+
+		// Assign cost
+		for(int s = 0; s < cmdp.getNumStates(); s++)
+			for(int a = 0; a < cmdp.getNumActions(); a++)
+				cmdp.assignCost(s, a, 2 * a);
+
+		CMDP[] cmdps = new CMDP[]{cmdp};
+
+		// Solve the problem without constraints
+		PlanningAlgorithm alg = new PlanningAlgorithm();
+		Solution solution = alg.solveUnconstrained(cmdps);
+		System.out.println("Expected reward: "+solution.getExpectedReward());
+		System.out.println("Expected cost: "+solution.getExpectedCost());
+
+		// Simulate solution
+		System.out.println();
+		Simulator sim = new Simulator(rnd);
+		sim.simulate(cmdps, solution, 1000);
+
+		// Print policy of agent 0
+		int agentID = 0;
+		double[][] policy = solution.getPolicy(agentID);
+		System.out.println();
+		for(int s=0; s<cmdps[agentID].getNumStates(); s++) {
+			System.out.print("State "+s+": ");
+			for(int a=0; a<cmdps[agentID].getNumActions(); a++) {
+				System.out.print(policy[s][a]+" ");
+			}
+			System.out.println();
+		}
+
+	}
 	
 	// Solve unconstrained problem for 1 agent with cost
-	public static void task2() {		
+	public static void task3() {
 		// Get CMDP model for 1 agent
 		CMDP cmdp = UserGenerator.getCMDPChild();
 
@@ -82,19 +119,17 @@ public class Homework {
 //		cmdp.assignCost(0, 0, 0);
 
 		int testSamples = 50;
-		double[] budgetLimit = new double[testSamples];
 		double[] expectedReward = new double[testSamples];
 
 		Solution solution = null;
-		for(double budget = 1.0; budget < testSamples + 1; budget++) {
+		for(int budget = 0; budget < testSamples; budget++) {
 			// Solve the problem without constraints
 			PlanningAlgorithm alg = new PlanningAlgorithm();
-			solution = alg.solve(cmdps, budget);
+			solution = alg.solve(cmdps, budget+1);
 			System.out.println("Expected reward: " + solution.getExpectedReward());
 //			System.out.println("Expected cost: " + solution.getExpectedCost());
 
-			expectedReward[(int)budget - 1] = solution.getExpectedReward();
-			budgetLimit[(int) budget - 1] = budget;
+			expectedReward[budget] = solution.getExpectedReward();
 		}
 
 		try {
@@ -102,7 +137,7 @@ public class Homework {
 			writer.write("budgetLimit,expectedReward\n");
 
 			for(int i = 0; i < testSamples; i++){
-				writer.write(budgetLimit[i] + "," + expectedReward[i] + "\n");
+				writer.write(i+1 + "," + expectedReward[i] + "\n");
 			}
 
 			writer.close();
@@ -128,25 +163,6 @@ public class Homework {
 			System.out.println();
 		}
 		
-	}
-	
-	// Solve constrained problem for 1 agent
-	public static void task3() {		
-		// Get CMDP model for 1 agent
-		CMDP cmdp = UserGenerator.getCMDPChild();
-		CMDP[] cmdps = new CMDP[]{cmdp};
-
-		// Assign cost
-		for(int s = 0; s < cmdp.getNumStates(); s++)
-			for(int a = 0; a < cmdp.getNumActions(); a++)
-				cmdp.assignCost(s, a, 2 * a);
-
-		PlanningAlgorithm alg = new PlanningAlgorithm();
-		Solution solution = alg.solve(cmdps, 20.0);
-		double expectedReward = solution.getExpectedReward();
-		System.out.println("Expected reward budget 20: "+expectedReward);
-		
-		// TODO print expected reward as function of cost limit L
 	}
 	
 	// Solve constrained problem for 2 agents with trivial budget split
@@ -185,9 +201,10 @@ public class Homework {
 		
 		double expectedReward = 0.0;
 		double expectedCost = 0.0;
+		int budget = 20;
 		for(int i=0; i<2; i++) {
 			CMDP cmdp = (i==0) ? cmdpChild : cmdpAdult;
-			Solution sol = alg.solve(new CMDP[]{cmdp}, 99999.0); // TODO replace the number with the correct limit
+			Solution sol = alg.solve(new CMDP[]{cmdp}, budget / 2.0);
 			double expectedReward0 = sol.getExpectedReward();
 			double expectedCost0 = sol.getExpectedCost();
 			System.out.println("Expected reward agent "+i+": "+expectedReward0);
@@ -199,7 +216,7 @@ public class Homework {
 		System.out.println("Expected cost: "+expectedCost);
 		
 		// multi-agent problem: invest 20 in total
-		Solution combinedSolution = alg.solve(new CMDP[]{cmdpChild, cmdpAdult}, 99999.0); // TODO replace the number with the correct limit
+		Solution combinedSolution = alg.solve(new CMDP[]{cmdpChild, cmdpAdult}, budget);
 		System.out.println();
 		System.out.println("=========== MULTI-AGENT PLANNING ===========");
 		System.out.println("Expected reward: "+combinedSolution.getExpectedReward());
@@ -214,6 +231,6 @@ public class Homework {
 	}
 	
 	public static void main(String[] args) {
-		  task2();
+		  task4();
 	}
 }
