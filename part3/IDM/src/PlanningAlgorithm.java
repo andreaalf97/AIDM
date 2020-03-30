@@ -230,7 +230,8 @@ public class PlanningAlgorithm {
 		}
 		System.out.println();
 
-
+		for(double v : V)
+			System.out.println(v);
 		
 		
 		double[][] policy = new double[cmdp.getNumStates()][cmdp.getNumActions()];

@@ -2,6 +2,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.*;
 
 
 public class Homework {
@@ -107,7 +108,7 @@ public class Homework {
 	// Solve unconstrained problem for 1 agent with cost
 	public static void task3() {
 		// Get CMDP model for 1 agent
-		CMDP cmdp = UserGenerator.getCMDPChild();
+		CMDP cmdp = UserGenerator.getCMDPAdult();
 
 		// Assign cost
 		for(int s = 0; s < cmdp.getNumStates(); s++)
@@ -133,7 +134,7 @@ public class Homework {
 		}
 
 		try {
-			FileWriter writer = new FileWriter("/home/andreaalf/Documents/AIDM/AIDM/part3/dataAnalysis/task2data.csv");
+			FileWriter writer = new FileWriter("/home/andreaalf/Documents/AIDM/AIDM/part3/dataAnalysis/task2dataAdult.csv");
 			writer.write("budgetLimit,expectedReward\n");
 
 			for(int i = 0; i < testSamples; i++){
@@ -168,66 +169,141 @@ public class Homework {
 	// Solve constrained problem for 2 agents with trivial budget split
 	public static void task4() {		
 		// Get CMDP models
-		CMDP cmdpChild = UserGenerator.getCMDPChild();
-		CMDP cmdpAdult = UserGenerator.getCMDPAdult();
-
-		// Assign cost child
-		for(int s = 0; s < cmdpChild.getNumStates(); s++)
-			for(int a = 0; a < cmdpChild.getNumActions(); a++)
-				cmdpChild.assignCost(s, a, 2 * a);
-
-		// Assign cost adult
-		for(int s = 0; s < cmdpAdult.getNumStates(); s++)
-			for(int a = 0; a < cmdpAdult.getNumActions(); a++)
-				cmdpAdult.assignCost(s, a, 2 * a);
-
-		PlanningAlgorithm alg = new PlanningAlgorithm();
-		Simulator sim = new Simulator(rnd);
+//		CMDP cmdpChild = UserGenerator.getCMDPChild();
+//		CMDP cmdpAdult = UserGenerator.getCMDPAdult();
+//
+//		// Assign cost child
+//		for(int s = 0; s < cmdpChild.getNumStates(); s++)
+//			for(int a = 0; a < cmdpChild.getNumActions(); a++)
+//				cmdpChild.assignCost(s, a, 2 * a);
+//
+//		// Assign cost adult
+//		for(int s = 0; s < cmdpAdult.getNumStates(); s++)
+//			for(int a = 0; a < cmdpAdult.getNumActions(); a++)
+//				cmdpAdult.assignCost(s, a, 2 * a);
+//
+//		PlanningAlgorithm alg = new PlanningAlgorithm();
+//		Simulator sim = new Simulator(rnd);
 		
 		// Solve both problems separately without constraints and print expectations
-		System.out.println("=========== UNCONSTRAINED ===========");
-		for(int i=0; i<2; i++) {
-			CMDP cmdp = (i==0) ? cmdpChild : cmdpAdult;
-			Solution sol = alg.solveUnconstrained(new CMDP[]{cmdp});
-			double expectedReward0 = sol.getExpectedReward();
-			double expectedCost0 = sol.getExpectedCost();
-			System.out.println("Expected reward agent "+i+": "+expectedReward0);
-			System.out.println("Expected cost agent "+i+": "+expectedCost0);
-		}
+//		System.out.println("=========== UNCONSTRAINED ===========");
+//		for(int i=0; i<2; i++) {
+//			CMDP cmdp = (i==0) ? cmdpChild : cmdpAdult;
+//			Solution sol = alg.solveUnconstrained(new CMDP[]{cmdp});
+//			double expectedReward0 = sol.getExpectedReward();
+//			double expectedCost0 = sol.getExpectedCost();
+//			System.out.println("Expected reward agent "+i+": "+expectedReward0);
+//			System.out.println("Expected cost agent "+i+": "+expectedCost0);
+//		}
 		
 		// trivial budget split: invest 10 in each agent
-		System.out.println();
-		System.out.println("=========== SEPARATE PLANNING ===========");
+//		System.out.println();
+//		System.out.println("=========== SEPARATE PLANNING ===========");
+//
+//		double expectedReward = 0.0;
+//		double expectedCost = 0.0;
+//		int budget = 20;
+//		for(int i=0; i<2; i++) {
+//			CMDP cmdp = (i==0) ? cmdpChild : cmdpAdult;
+//			Solution sol = alg.solve(new CMDP[]{cmdp}, budget / 2.0);
+//			double expectedReward0 = sol.getExpectedReward();
+//			double expectedCost0 = sol.getExpectedCost();
+//			System.out.println("Expected reward agent "+i+": "+expectedReward0);
+//			System.out.println("Expected cost agent "+i+": "+expectedCost0);
+//			expectedReward += expectedReward0;
+//			expectedCost += expectedCost0;
+//		}
+//		System.out.println("Expected reward: "+expectedReward);
+//		System.out.println("Expected cost: "+expectedCost);
 		
-		double expectedReward = 0.0;
-		double expectedCost = 0.0;
-		int budget = 20;
-		for(int i=0; i<2; i++) {
-			CMDP cmdp = (i==0) ? cmdpChild : cmdpAdult;
-			Solution sol = alg.solve(new CMDP[]{cmdp}, budget / 2.0);
-			double expectedReward0 = sol.getExpectedReward();
-			double expectedCost0 = sol.getExpectedCost();
-			System.out.println("Expected reward agent "+i+": "+expectedReward0);
-			System.out.println("Expected cost agent "+i+": "+expectedCost0);
-			expectedReward += expectedReward0;
-			expectedCost += expectedCost0;
+		// This represents the % of children in the tested group
+		double[] childrenComposition = new double[]{0.75};
+//		double[] childrenComposition = new double[]{0.5};
+		PlanningAlgorithm alg = new PlanningAlgorithm();
+
+		for(int index = 0; index < childrenComposition.length; index++) {
+			double composition = childrenComposition[index];
+			System.out.println("=======================================");
+			System.out.println("==========TESTING FOR " + composition + " / " + (1 - composition) + " =====");
+			System.out.println("=======================================");
+
+			try {
+
+				FileWriter writer = new FileWriter("/home/andreaalf/Documents/AIDM/AIDM/part3/dataAnalysis/task4/task4_" + index + ".csv");
+				writer.write("numAgents,runtime\n");
+				for (int nAgents = 2; nAgents <= 50; nAgents += 2) {
+					int totalBudget = 10 * nAgents;
+					CMDP[] agents = new CMDP[nAgents];
+
+					int i;
+
+					// First we create the children
+					for (i = 0; i < (int) Math.round(nAgents * composition); i++) {
+						agents[i] = UserGenerator.getCMDPChild();
+
+						for (int s = 0; s < agents[i].getNumStates(); s++)
+							for (int a = 0; a < agents[i].getNumActions(); a++)
+								agents[i].assignCost(s, a, 2 * a);
+					}
+
+					// Then we create the adults
+					for (; i < nAgents; i++) {
+						agents[i] = UserGenerator.getCMDPAdult();
+
+						for (int s = 0; s < agents[i].getNumStates(); s++)
+							for (int a = 0; a < agents[i].getNumActions(); a++)
+								agents[i].assignCost(s, a, 2 * a);
+					}
+
+					try{
+						FutureTask<Solution> task = new FutureTask<>(() -> alg.solve(agents, totalBudget));
+						long start = System.currentTimeMillis();
+						new Thread(task).start();
+						Solution solution = task.get(5L, TimeUnit.MINUTES);
+						long end = System.currentTimeMillis();
+						System.out.println(nAgents + " agents: " + (end - start) + "ms");
+						writer.write(nAgents + "," + (end - start) + "\n");
+					}
+					catch (InterruptedException e) {
+						writer.close();
+						System.err.println("Received an interrupted exception");
+					}
+					catch (ExecutionException e){
+						writer.close();
+						e.printStackTrace();
+					}
+					catch (TimeoutException e){
+						System.out.println(nAgents + " agents: " + "TIMED OUT	");
+						writer.write(nAgents + ",0\n");
+					}
+
+//					alg.solve(agents, totalBudget);
+
+//					writer.write(nAgents + "," + (end - start) + "\n");
+
+				}
+
+				writer.close();
+			}
+			catch (IOException e){
+				e.printStackTrace();
+			}
 		}
-		System.out.println("Expected reward: "+expectedReward);
-		System.out.println("Expected cost: "+expectedCost);
-		
-		// multi-agent problem: invest 20 in total
-		Solution combinedSolution = alg.solve(new CMDP[]{cmdpChild, cmdpAdult}, budget);
-		System.out.println();
-		System.out.println("=========== MULTI-AGENT PLANNING ===========");
-		System.out.println("Expected reward: "+combinedSolution.getExpectedReward());
-		System.out.println("Expected reward agent 0: "+combinedSolution.getExpectedReward(0));
-		System.out.println("Expected reward agent 1: "+combinedSolution.getExpectedReward(1));
-		System.out.println("Expected cost total: "+combinedSolution.getExpectedCost());
-		System.out.println("Expected cost agent 0: "+combinedSolution.getExpectedCost(0));
-		System.out.println("Expected cost agent 1: "+combinedSolution.getExpectedCost(1));
-		
+
+//		Solution combinedSolution = alg.solve(new CMDP[]{cmdpChild, cmdpAdult}, budget);
+//		System.out.println();
+//		System.out.println("=========== MULTI-AGENT PLANNING ===========");
+//		System.out.println("Expected reward: "+combinedSolution.getExpectedReward());
+//		System.out.println("Expected reward agent 0: "+combinedSolution.getExpectedReward(0));
+//		System.out.println("Expected reward agent 1: "+combinedSolution.getExpectedReward(1));
+//		System.out.println("Expected cost total: "+combinedSolution.getExpectedCost());
+//		System.out.println("Expected cost agent 0: "+combinedSolution.getExpectedCost(0));
+//		System.out.println("Expected cost agent 1: "+combinedSolution.getExpectedCost(1));
+//
 		// simulate
-		sim.simulate(new CMDP[]{cmdpChild, cmdpAdult}, combinedSolution, 10000);
+//		sim.simulate(new CMDP[]{cmdpChild, cmdpAdult}, combinedSolution, 10000);
+
+		System.exit(0);
 	}
 	
 	public static void main(String[] args) {
