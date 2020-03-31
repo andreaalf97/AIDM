@@ -92,7 +92,7 @@ public class Homework {
 		// Print policy of agent
 		int agentID = 0;
 		double[][] policy = solution.getPolicy(agentID);
-		System.out.println();
+		System.out.println("\nPOLICY");
 		for(int s=0; s<cmdps[agentID].getNumStates(); s++) {
 			System.out.print("State "+s+": ");
 			for(int a=0; a<cmdps[agentID].getNumActions(); a++) {
