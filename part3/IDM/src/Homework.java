@@ -2,6 +2,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 
 public class Homework {
@@ -228,6 +232,80 @@ public class Homework {
 		// simulate
 		sim.simulate(new CMDP[]{cmdpChild, cmdpAdult}, combinedSolution, 10000);
 	}
+
+	public static void task5() {
+
+		// This represents the % of children in the tested group
+		double[] childrenComposition = new double[]{0.25, 0.50, 0.75};
+		PlanningAlgorithm alg = new PlanningAlgorithm();
+
+		for(int index = 0; index < childrenComposition.length; index++) {
+			double composition = childrenComposition[index];
+			System.out.println("=======================================");
+			System.out.println("==========TESTING FOR " + composition + " / " + (1 - composition) + " =====");
+			System.out.println("=======================================");
+
+			try {
+
+				FileWriter writer = new FileWriter("/home/andreaalf/Documents/AIDM/AIDM/part3/dataAnalysis/task4/task4_" + index + ".csv");
+				writer.write("numAgents,runtime\n");
+				for (int nAgents = 2; nAgents <= 50; nAgents += 2) {
+					int totalBudget = 10 * nAgents;
+					CMDP[] agents = new CMDP[nAgents];
+
+					int i;
+
+					// First we create the children
+					for (i = 0; i < (int) Math.round(nAgents * composition); i++) {
+						agents[i] = UserGenerator.getCMDPChild();
+
+						for (int s = 0; s < agents[i].getNumStates(); s++)
+							for (int a = 0; a < agents[i].getNumActions(); a++)
+								agents[i].assignCost(s, a, 2 * a);
+					}
+
+					// Then we create the adults
+					for (; i < nAgents; i++) {
+						agents[i] = UserGenerator.getCMDPAdult();
+
+						for (int s = 0; s < agents[i].getNumStates(); s++)
+							for (int a = 0; a < agents[i].getNumActions(); a++)
+								agents[i].assignCost(s, a, 2 * a);
+					}
+
+					try{
+						FutureTask<Solution> task = new FutureTask<>(() -> alg.solve(agents, totalBudget));
+						long start = System.currentTimeMillis();
+						new Thread(task).start();
+						Solution solution = task.get(5L, TimeUnit.MINUTES);
+						long end = System.currentTimeMillis();
+						System.out.println(nAgents + " agents: " + (end - start) + "ms");
+						writer.write(nAgents + "," + (end - start) + "\n");
+					}
+					catch (InterruptedException e) {
+						writer.close();
+						System.err.println("Received an interrupted exception");
+					}
+					catch (ExecutionException e){
+						writer.close();
+						e.printStackTrace();
+					}
+					catch (TimeoutException e){
+						System.out.println(nAgents + " agents: " + "TIMED OUT	");
+						writer.write(nAgents + ",0\n");
+					}
+
+				}
+
+				writer.close();
+			}
+			catch (IOException e){
+				e.printStackTrace();
+			}
+		}
+
+		System.exit(0);
+	}
 	
 	public static void main(String[] args) {
 		if (args.length < 1) {
@@ -240,6 +318,7 @@ public class Homework {
 			case 2 : task2(); break;
 			case 3 : task3(); break;
 			case 4 : task4(); break;
+			case 5 : task5(); break;
 			default : System.out.println("Wrong task number.");
 		}
 	}
