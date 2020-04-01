@@ -1,7 +1,6 @@
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -305,6 +304,93 @@ public class Homework {
 		}
 
 		System.exit(0);
+	}
+
+	// Personal algorithm for solving the special instance
+	// This code has not been optimized at all, neither
+	// is it properly structured, it is just a proof of concept
+	public static void task6() {
+		// Get CMDP models
+		int limit1 = 1388;
+		int limit2 = 3817;
+		CMDP[] agents = new CMDP[limit2];
+		List<myAgent> listChild = new LinkedList<>();
+		List<myAgent> listAdult = new LinkedList<>();
+		for (int i=0; i<limit1; i++){
+			agents[i] = UserGenerator.getCMDPChild();
+			agents[i].budget = 10;
+			listChild.add(new myAgent(i, 10));
+			// Assign cost child
+			for(int s = 0; s < agents[i].getNumStates(); s++)
+				for(int a = 0; a < agents[i].getNumActions(); a++)
+					agents[i].assignCost(s, a, 2 * a);
+		}
+		for (int i=limit1; i<limit2; i++){
+			agents[i] = UserGenerator.getCMDPAdult();
+			agents[i].budget = 10;
+			listAdult.add(new myAgent(i, 10));
+			// Assign cost child
+			for(int s = 0; s < agents[i].getNumStates(); s++)
+				for(int a = 0; a < agents[i].getNumActions(); a++)
+					agents[i].assignCost(s, a, 2 * a);
+		}
+
+		PlanningAlgorithm alg = new PlanningAlgorithm();
+		System.out.println("Each array slot represents the number of agents having that budget, where budget = array index");
+
+		for (int j=0; j<11; j++) {
+
+			int[] counter = new int[20];
+			for (int i=0; i<limit2; i++){
+				counter[(int)agents[i].budget]++;
+			}
+			System.out.println(Arrays.toString(counter));
+
+			double expectedReward = 0.0;
+			for (int i = 0; i < limit2; i++) {
+				CMDP cmdp = agents[i];
+				Solution sol;
+				sol = alg.solve(new CMDP[]{cmdp}, cmdp.budget);
+				double expectedReward0 = sol.getExpectedReward();
+				expectedReward += expectedReward0;
+			}
+			System.out.printf("Expected reward: %.2f\n\n", expectedReward);
+
+			for (int i=0; i<limit1; i++){
+				listChild.get(i).budget--;
+				listAdult.get(i).budget++;
+			}
+
+			listChild.sort((o1, o2) -> o2.budget.compareTo(o1.budget));
+			listAdult.sort((o1, o2) -> o1.budget.compareTo(o2.budget));
+
+			for (int i=0; i<limit1; i++){
+				agents[i].budget = listChild.get(i).budget;
+			}
+			int c = 0;
+			for (int i=limit1; i<limit2; i++){
+				agents[i].budget = listAdult.get(c).budget;
+				c++;
+			}
+
+			/*
+			for (int i=0; i<limit1; i++){
+				System.out.print(listChild.get(i).budget + " ");
+			}
+			System.out.println();
+			for (int i=0; i<limit2-limit1; i++){
+				System.out.print(listAdult.get(i).budget + " ");
+			}
+			System.out.println();
+			for (int i=0; i<limit2; i++){
+				System.out.print(agents[i].budget + " ");
+			}
+			System.out.println();
+
+			 */
+		}
+
+
 	}
 	
 	public static void main(String[] args) {
