@@ -1,8 +1,5 @@
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
@@ -168,7 +165,6 @@ public class PlanningAlgorithm {
 		}
 
 
-		
 		ArrayList<double[][]> policies = new ArrayList<double[][]>();
 		for(int i=0; i<nAgents; i++) {
 			policies.add(policy[i]);
@@ -185,8 +181,9 @@ public class PlanningAlgorithm {
 		int nActions = cmdp.getNumActions();
 		double e = 0.00005;
 		
-		// TODO compute an optimal value function for the cmdp object
+
 		// Check out slide #25 of the first lecture for this algorithm
+		// We used the same symbols
 		double[][] Q = new double[nStates][nActions];
 		double d;
 		do {
@@ -196,28 +193,35 @@ public class PlanningAlgorithm {
 					
 					double sum = 0;
 					for(int sNext=0; sNext<nStates; sNext++) {
+						//for all positive transition probabilities P(sNext, s, a)
 						if (cmdp.getTransitionProbability(s, a, sNext) > 0){
-							
+
+							//max_aNext Q(sNext, aNext)
 							double max_Q_nextStep = 0;
 							for(int aNext=0; aNext<nActions; aNext++) {
 								if (Q[sNext][aNext] > max_Q_nextStep)
 									max_Q_nextStep = Q[sNext][aNext];
 							}
+							//Sum_sNext (P(sNext, s, a) * max_aNext Q(sNext, aNext))
 							sum += cmdp.getTransitionProbability(s, a, sNext) * max_Q_nextStep;
 						}
 					}
-					
+
+					//store old value for comparison
 					double oldQ = Q[s][a];
+					//Q_t+1(s,a) = R(s,a) + gamma * Sum_sNext (P(sNext, s, a) * max_aNext Q_t(sNext, aNext))
 					Q[s][a] = cmdp.getReward(s, a) + cmdp.getDiscountFactor() * sum;
+					//calculate the difference d between the old and new expected reward.
 					d = Double.max(d, Math.abs(Q[s][a] - oldQ));
 					
 				}
 			}
-			
+
+			//is the difference between the old and new expected reward bigger than e?
 		} while (d >= e);
 
 
-		//Print Q
+		//Print Value Function Q
 		System.out.println("Q - VALUE FUNCTION");
 		System.out.println("--------------------------------");
 		for(int s=0; s<nStates; s++) {
@@ -230,12 +234,12 @@ public class PlanningAlgorithm {
 		}
 		System.out.println();
 
-
-		
-		
+		//Set action probability to 1 if that action has the highest expected reward
+		//compared to the other actions for the same state. By default, the earliest
+		//encountered action, from 0 to n, amongst equal-reward actions, is chosen,
+		//since it is also the cheapest one (even though there are no costs now).
+		//We assumed a deterministic policy is wanted here, not a stochastic one.
 		double[][] policy = new double[cmdp.getNumStates()][cmdp.getNumActions()];
-		
-		// TODO fill the policy array with probabilities
 		for(int s=0; s<nStates; s++) {
 			 double maxUtil = 0;
 			 int chosen_action = 0;
@@ -246,6 +250,7 @@ public class PlanningAlgorithm {
 				 }
 			 }
 			 policy[s][chosen_action] = 1;
+			 //set expected reward V per state
 			 V[s] = maxUtil;
 		}
 		

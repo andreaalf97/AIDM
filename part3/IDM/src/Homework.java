@@ -48,10 +48,9 @@ public class Homework {
 		Simulator sim = new Simulator(rnd);
 		sim.simulate(cmdps, solution, 1000);
 		
-		// Print policy of agent 0
+		// Print policy of agent
 		int agentID = 0;
 		double[][] policy = solution.getPolicy(agentID);
-
 		System.out.println("\nPOLICY");
 		System.out.println("--------------------------------");
 		for(int s=0; s<cmdps[agentID].getNumStates(); s++) {
@@ -90,10 +89,10 @@ public class Homework {
 		Simulator sim = new Simulator(rnd);
 		sim.simulate(cmdps, solution, 1000);
 
-		// Print policy of agent 0
+		// Print policy of agent
 		int agentID = 0;
 		double[][] policy = solution.getPolicy(agentID);
-		System.out.println();
+		System.out.println("\nPOLICY");
 		for(int s=0; s<cmdps[agentID].getNumStates(); s++) {
 			System.out.print("State "+s+": ");
 			for(int a=0; a<cmdps[agentID].getNumActions(); a++) {
@@ -104,7 +103,7 @@ public class Homework {
 
 	}
 	
-	// Solve unconstrained problem for 1 agent with cost
+	// Solve constrained problem for 1 agent (iteratively increasing budget)
 	public static void task3() {
 		// Get CMDP model for 1 agent
 		CMDP cmdp = UserGenerator.getCMDPChild();
@@ -116,24 +115,24 @@ public class Homework {
 
 		CMDP[] cmdps = new CMDP[]{cmdp};
 
-//		cmdp.assignCost(0, 0, 0);
-
 		int testSamples = 50;
 		double[] expectedReward = new double[testSamples];
 
+		//Solve for all budgets from 1 to 50
 		Solution solution = null;
 		for(int budget = 0; budget < testSamples; budget++) {
 			// Solve the problem without constraints
 			PlanningAlgorithm alg = new PlanningAlgorithm();
 			solution = alg.solve(cmdps, budget+1);
 			System.out.println("Expected reward: " + solution.getExpectedReward());
-//			System.out.println("Expected cost: " + solution.getExpectedCost());
+			//System.out.println("Expected cost: " + solution.getExpectedCost());
 
 			expectedReward[budget] = solution.getExpectedReward();
 		}
 
+		//write all 50 expected rewards in a file
 		try {
-			FileWriter writer = new FileWriter("/home/andreaalf/Documents/AIDM/AIDM/part3/dataAnalysis/task2data.csv");
+			FileWriter writer = new FileWriter("task3data.csv");
 			writer.write("budgetLimit,expectedReward\n");
 
 			for(int i = 0; i < testSamples; i++){
@@ -146,15 +145,15 @@ public class Homework {
 			e.printStackTrace();
 		}
 
-		// Simulate solution
+		// Simulate solution for budget = 50
 		System.out.println();
 		Simulator sim = new Simulator(rnd);
 		sim.simulate(cmdps, solution, 1000);
 		
-		// Print policy of agent 0
+		// Print policy of agent for budget = 50
 		int agentID = 0;
 		double[][] policy = solution.getPolicy(agentID);
-		System.out.println();
+		System.out.println("\nPOLICY");
 		for(int s=0; s<cmdps[agentID].getNumStates(); s++) {
 			System.out.print("State "+s+": ");
 			for(int a=0; a<cmdps[agentID].getNumActions(); a++) {
@@ -231,6 +230,17 @@ public class Homework {
 	}
 	
 	public static void main(String[] args) {
-		  task4();
+		if (args.length < 1) {
+			System.out.println("Please indicate the number of the task you would like to execute.");
+			return;
+		}
+		switch (Integer.parseInt(args[0])) {
+			case 0 : task0(); break;
+			case 1 : task1(); break;
+			case 2 : task2(); break;
+			case 3 : task3(); break;
+			case 4 : task4(); break;
+			default : System.out.println("Wrong task number.");
+		}
 	}
 }
