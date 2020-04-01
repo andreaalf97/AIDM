@@ -232,6 +232,7 @@ public class Homework {
 		sim.simulate(new CMDP[]{cmdpChild, cmdpAdult}, combinedSolution, 10000);
 	}
 
+	//The code for generating the tests of question 4a
 	public static void task5() {
 
 		// This represents the % of children in the tested group
@@ -246,7 +247,7 @@ public class Homework {
 
 			try {
 
-				FileWriter writer = new FileWriter("/home/andreaalf/Documents/AIDM/AIDM/part3/dataAnalysis/task4/task4_" + index + ".csv");
+				FileWriter writer = new FileWriter("task4_" + index + ".csv");
 				writer.write("numAgents,runtime\n");
 				for (int nAgents = 2; nAgents <= 50; nAgents += 2) {
 					int totalBudget = 10 * nAgents;
@@ -306,7 +307,7 @@ public class Homework {
 		System.exit(0);
 	}
 
-	// Personal algorithm for solving the special instance
+	// Personal algorithm for solving the special instance of question 4b
 	// This code has not been optimized at all, neither
 	// is it properly structured, it is just a proof of concept
 	public static void task6() {

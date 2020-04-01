@@ -2,6 +2,8 @@
 
 public class CMDP extends MDP {	
 	private double[][] costFunction;
+
+	public double budget = 0; //important only to our custom task 6
 	
 	public CMDP(int nStates, int nActions, int initialState, double discountFactor, double[][] costFunction) {
 		super(nStates, nActions, initialState, discountFactor);
@@ -10,7 +12,6 @@ public class CMDP extends MDP {
 	
 	/**
 	 * Get cost / resource consumption for resource k when executing action a in state s
-	 * @param k resource id
 	 * @param s state
 	 * @param a action
 	 * @return cost / resource consumption
