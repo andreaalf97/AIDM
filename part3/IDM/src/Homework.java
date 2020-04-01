@@ -1,7 +1,6 @@
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -233,6 +232,7 @@ public class Homework {
 		sim.simulate(new CMDP[]{cmdpChild, cmdpAdult}, combinedSolution, 10000);
 	}
 
+	//The code for generating the tests of question 4a
 	public static void task5() {
 
 		// This represents the % of children in the tested group
@@ -247,7 +247,7 @@ public class Homework {
 
 			try {
 
-				FileWriter writer = new FileWriter("/home/andreaalf/Documents/AIDM/AIDM/part3/dataAnalysis/task4/task4_" + index + ".csv");
+				FileWriter writer = new FileWriter("task4_" + index + ".csv");
 				writer.write("numAgents,runtime\n");
 				for (int nAgents = 2; nAgents <= 50; nAgents += 2) {
 					int totalBudget = 10 * nAgents;
@@ -306,6 +306,93 @@ public class Homework {
 
 		System.exit(0);
 	}
+
+	// Personal algorithm for solving the special instance of question 4b
+	// This code has not been optimized at all, neither
+	// is it properly structured, it is just a proof of concept
+	public static void task6() {
+		// Get CMDP models
+		int limit1 = 1388;
+		int limit2 = 3817;
+		CMDP[] agents = new CMDP[limit2];
+		List<myAgent> listChild = new LinkedList<>();
+		List<myAgent> listAdult = new LinkedList<>();
+		for (int i=0; i<limit1; i++){
+			agents[i] = UserGenerator.getCMDPChild();
+			agents[i].budget = 10;
+			listChild.add(new myAgent(i, 10));
+			// Assign cost child
+			for(int s = 0; s < agents[i].getNumStates(); s++)
+				for(int a = 0; a < agents[i].getNumActions(); a++)
+					agents[i].assignCost(s, a, 2 * a);
+		}
+		for (int i=limit1; i<limit2; i++){
+			agents[i] = UserGenerator.getCMDPAdult();
+			agents[i].budget = 10;
+			listAdult.add(new myAgent(i, 10));
+			// Assign cost child
+			for(int s = 0; s < agents[i].getNumStates(); s++)
+				for(int a = 0; a < agents[i].getNumActions(); a++)
+					agents[i].assignCost(s, a, 2 * a);
+		}
+
+		PlanningAlgorithm alg = new PlanningAlgorithm();
+		System.out.println("Each array slot represents the number of agents having that budget, where budget = array index");
+
+		for (int j=0; j<11; j++) {
+
+			int[] counter = new int[20];
+			for (int i=0; i<limit2; i++){
+				counter[(int)agents[i].budget]++;
+			}
+			System.out.println(Arrays.toString(counter));
+
+			double expectedReward = 0.0;
+			for (int i = 0; i < limit2; i++) {
+				CMDP cmdp = agents[i];
+				Solution sol;
+				sol = alg.solve(new CMDP[]{cmdp}, cmdp.budget);
+				double expectedReward0 = sol.getExpectedReward();
+				expectedReward += expectedReward0;
+			}
+			System.out.printf("Expected reward: %.2f\n\n", expectedReward);
+
+			for (int i=0; i<limit1; i++){
+				listChild.get(i).budget--;
+				listAdult.get(i).budget++;
+			}
+
+			listChild.sort((o1, o2) -> o2.budget.compareTo(o1.budget));
+			listAdult.sort((o1, o2) -> o1.budget.compareTo(o2.budget));
+
+			for (int i=0; i<limit1; i++){
+				agents[i].budget = listChild.get(i).budget;
+			}
+			int c = 0;
+			for (int i=limit1; i<limit2; i++){
+				agents[i].budget = listAdult.get(c).budget;
+				c++;
+			}
+
+			/*
+			for (int i=0; i<limit1; i++){
+				System.out.print(listChild.get(i).budget + " ");
+			}
+			System.out.println();
+			for (int i=0; i<limit2-limit1; i++){
+				System.out.print(listAdult.get(i).budget + " ");
+			}
+			System.out.println();
+			for (int i=0; i<limit2; i++){
+				System.out.print(agents[i].budget + " ");
+			}
+			System.out.println();
+
+			 */
+		}
+
+
+	}
 	
 	public static void main(String[] args) {
 		if (args.length < 1) {
@@ -319,7 +406,20 @@ public class Homework {
 			case 3 : task3(); break;
 			case 4 : task4(); break;
 			case 5 : task5(); break;
+			case 6 : task6(); break;
 			default : System.out.println("Wrong task number.");
 		}
+	}
+}
+
+
+//important only to our custom task 6
+class myAgent  {
+	int ID;
+	Double budget;
+
+	myAgent(int id, double budget){
+		ID = id;
+		this.budget = budget;
 	}
 }
